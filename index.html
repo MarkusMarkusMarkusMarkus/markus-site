@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vasco - Thought Partnership</title>
+    <title>Nosilverv</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
@@ -13,7 +13,30 @@
             padding: 40px 20px;
             color: #000;
             background: #fff;
-            font-size: 16px;
+            font-size: 14px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body.dark {
+            background: #000;
+            color: #fff;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: 1px solid currentColor;
+            color: inherit;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: inherit;
+        }
+        
+        .theme-toggle:hover {
+            opacity: 0.7;
         }
         
         h1 {
@@ -42,7 +65,7 @@
         
         td {
             padding: 4px 8px;
-            border: 1px solid #000;
+            border: 1px solid currentColor;
             vertical-align: top;
         }
         
@@ -52,7 +75,7 @@
         }
         
         a {
-            color: #000;
+            color: inherit;
             text-decoration: underline;
         }
         
@@ -67,7 +90,7 @@
         .quote {
             margin: 2em 0;
             padding-left: 1em;
-            border-left: 2px solid #000;
+            border-left: 2px solid currentColor;
         }
         
         ul {
@@ -134,5 +157,7 @@
     <h2>Get In Touch</h2>
     
     <p>DM me on Twitter <a href="https://twitter.com/nosilverv">@nosilverv</a> or email pseudonimosa@gmail.com with a sentence about what you're working on. If it sounds like a fit, I'll send a link to book a slot.</p>
+
+    <button class="theme-toggle" onclick="document.body.classList.toggle('dark')">◐</button>
 </body>
 </html>
