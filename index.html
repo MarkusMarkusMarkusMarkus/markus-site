@@ -5,15 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nosilverv</title>
     <style>
+        :root {
+            --line-height: 1.5rem;
+            --content-width: 80ch;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            max-width: 550px;
+            font-family: 'Courier New', 'Courier', monospace;
+            font-size: 1rem;
+            line-height: var(--line-height);
+            max-width: var(--content-width);
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: calc(var(--line-height) * 2);
             color: #000;
             background: #fff;
-            font-size: 14px;
             transition: background-color 0.3s, color 0.3s;
         }
         
@@ -22,56 +31,33 @@
             color: #fff;
         }
         
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: 1px solid currentColor;
-            color: inherit;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            font-family: inherit;
-        }
-        
-        .theme-toggle:hover {
-            opacity: 0.7;
-        }
-        
-        h1 {
-            font-size: 1.5em;
-            margin-bottom: 0.3em;
-            font-weight: normal;
-        }
-        
         h2 {
-            font-size: 1.2em;
-            margin-top: 2em;
-            margin-bottom: 0.8em;
-            font-weight: normal;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: calc(var(--line-height) * 2);
+            margin-bottom: var(--line-height);
         }
         
-        .subtitle {
-            font-size: 1em;
-            margin-bottom: 2em;
+        p {
+            margin: var(--line-height) 0;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 2em 0;
+            margin: var(--line-height) 0;
         }
         
         td {
-            padding: 4px 8px;
+            padding: 0;
             border: 1px solid currentColor;
+            padding: 0 1ch;
             vertical-align: top;
+            line-height: var(--line-height);
         }
         
         td:first-child {
-            font-weight: normal;
-            width: 120px;
+            width: 20ch;
         }
         
         a {
@@ -83,23 +69,39 @@
             text-decoration: none;
         }
         
-        p {
-            margin: 1em 0;
-        }
-        
         .quote {
-            margin: 2em 0;
-            padding-left: 1em;
+            margin: calc(var(--line-height) * 2) 0;
+            padding-left: 2ch;
             border-left: 2px solid currentColor;
         }
         
-        ul {
-            margin: 0.5em 0;
-            padding-left: 1.5em;
+        .theme-toggle {
+            position: fixed;
+            top: calc(var(--line-height) * 1);
+            right: 2ch;
+            background: none;
+            border: 1px solid currentColor;
+            color: inherit;
+            padding: 0 2ch;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+            line-height: var(--line-height);
         }
         
-        li {
-            margin: 0.3em 0;
+        .theme-toggle:hover {
+            background: currentColor;
+            color: var(--bg);
+        }
+        
+        body.dark .theme-toggle:hover {
+            background: #fff;
+            color: #000;
+        }
+        
+        body:not(.dark) .theme-toggle:hover {
+            background: #000;
+            color: #fff;
         }
     </style>
 </head>
