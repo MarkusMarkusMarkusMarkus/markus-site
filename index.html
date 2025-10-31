@@ -22,6 +22,42 @@
             color: #fff;
         }
         
+        h2 {
+            font-size: 1.2em;
+            margin-top: 2em;
+            margin-bottom: 0.8em;
+            font-weight: normal;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2em 0;
+        }
+        
+        td {
+            padding: 4px 8px;
+            border: 1px solid currentColor;
+            vertical-align: top;
+        }
+        
+        td:first-child {
+            width: 120px;
+        }
+        
+        a {
+            color: inherit;
+            text-decoration: underline;
+        }
+        
+        a:hover {
+            text-decoration: none;
+        }
+        
+        p {
+            margin: 0.3em 0;
+        }
+        
         .theme-toggle {
             position: fixed;
             top: 20px;
@@ -39,67 +75,15 @@
             opacity: 0.7;
         }
         
-        h1 {
-            font-size: 1.5em;
-            margin-bottom: 0.3em;
-            font-weight: normal;
+        .book-button {
+            text-align: center;
+            margin: 0.5em 0 2em;
+            font-size: 48px;
+            cursor: pointer;
         }
         
-        h2 {
-            font-size: 1.2em;
-            margin-top: 2em;
-            margin-bottom: 0.8em;
-            font-weight: normal;
-        }
-        
-        .subtitle {
-            font-size: 1em;
-            margin-bottom: 2em;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2em 0;
-        }
-        
-        td {
-            padding: 4px 8px;
-            border: 1px solid currentColor;
-            vertical-align: top;
-        }
-        
-        td:first-child {
-            font-weight: normal;
-            width: 120px;
-        }
-        
-        a {
-            color: inherit;
-            text-decoration: underline;
-        }
-        
-        a:hover {
-            text-decoration: none;
-        }
-        
-        p {
-            margin: 1em 0;
-        }
-        
-        .quote {
-            margin: 2em 0;
-            padding-left: 1em;
-            border-left: 2px solid currentColor;
-        }
-        
-        ul {
-            margin: 0.5em 0;
-            padding-left: 1.5em;
-        }
-        
-        li {
-            margin: 0.3em 0;
+        .book-button:hover {
+            opacity: 0.6;
         }
     </style>
 </head>
@@ -115,7 +99,7 @@
         </tr>
         <tr>
             <td>Updated</td>
-            <td>October 2025</td>
+            <td>November 2025</td>
         </tr>
     </table>
 
@@ -124,37 +108,23 @@
     <table>
         <tr>
             <td>Single Session</td>
-            <td>60-minute co-thinking call. Good for positioning, content strategy, idea architecture, breaking through creative blocks.</td>
+            <td>60-minute call</td>
         </tr>
         <tr>
             <td>Monthly Retainer</td>
-            <td>1-2 calls/month + ongoing async co-thinking and editing. For 2-4 clients at a time. High-trust, low-volume partnership. No clock-watching, no deliverables.</td>
+            <td>1-2 calls/month + async support. For 2-4 clients at a time.</td>
         </tr>
     </table>
 
-    <h2>Testimonial</h2>
+    <h2>Select Clients</h2>
     
-    <div class="quote">
-        <p>"In 30 minutes, [REDACTED] cut through my over-engineered marketing strategy and identified the single highest-leverage action that would actually move the needle. While I was building elaborate systems, he saw the critical path. That's the difference between theoretical marketing knowledge and real virality intuition — he converted complexity into clarity and gave me a direct action with the highest ROI."</p>
-        <p>— Moritz Bierling, Founder of Modern Minuteman</p>
-    </div>
-
-    <h2>Who This Is For</h2>
-    
-    <table>
-        <tr>
-            <td>Good Fit</td>
-            <td>Thinkers, writers, and coaches refining positioning · People with more insight than output · Anyone stuck between too many good ideas and no coherent direction</td>
-        </tr>
-        <tr>
-            <td>Not For</td>
-            <td>People looking for execution-only services · Those wanting a content calendar or ghostwriter</td>
-        </tr>
-    </table>
+    <p>• Moritz Bierling</p>
+    <p>• Michael Stroe</p>
+    <p>• Chris Lakin</p>
 
     <h2>Get In Touch</h2>
-    
-    <p>DM me on Twitter <a href="https://twitter.com/nosilverv">@nosilverv</a> or email pseudonimosa@gmail.com with a sentence about what you're working on. If it sounds like a fit, I'll send a link to book a slot.</p>
+
+    <div class="book-button">◉</div>
 
     <button class="theme-toggle" onclick="document.body.classList.toggle('dark')">◐</button>
 </body>
