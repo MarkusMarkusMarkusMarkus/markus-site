@@ -1,170 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nosilverv</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            max-width: 550px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            color: #000;
-            background: #fff;
-            font-size: 14px;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        
-        body.dark {
-            background: #000;
-            color: #fff;
-        }
-        
-        h2 {
-            font-size: 1.2em;
-            margin-top: 2em;
-            margin-bottom: 0.8em;
-            font-weight: normal;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2em 0;
-        }
-        
-        td {
-            padding: 4px 8px;
-            border: 1px solid currentColor;
-            vertical-align: top;
-        }
-        
-        td:first-child {
-            width: 120px;
-        }
-        
-        a {
-            color: inherit;
-            text-decoration: underline;
-        }
-        
-        a:hover {
-            text-decoration: none;
-        }
-        
-        p {
-            margin: 1em 0;
-        }
-        
-        .clients p {
-            margin: 0.3em 0;
-        }
-        
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: 1px solid currentColor;
-            color: inherit;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            font-family: inherit;
-        }
-        
-        .theme-toggle:hover {
-            opacity: 0.7;
-        }
-        
-        .cta-section {
-            text-align: center;
-            margin-top: 2em;
-        }
-        
-        .cta-section h2 {
-            text-align: center;
-            margin-left: -7px;
-            margin-right: 0;
-            padding: 0;
-            width: 100%;
-        }
-        
-        .book-button {
-            display: block;
-            text-align: center;
-            margin: 0.2em auto 2em;
-            font-size: 48px;
-            cursor: pointer;
-            line-height: 1;
-        }
-        
-        .book-button:hover {
-            opacity: 0.6;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consulting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf9f7;
+      --text: #1a1a1a;
+      --muted: #666;
+      --border: #e0e0e0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 80px 24px 120px;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 500;
+      margin-bottom: 48px;
+    }
+
+    h2 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-top: 48px;
+      margin-bottom: 16px;
+    }
+
+    p {
+      margin-bottom: 1em;
+    }
+
+    a {
+      color: var(--text);
+    }
+
+    .service {
+      margin-bottom: 24px;
+    }
+
+    .service-name {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .service-desc {
+      color: var(--muted);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 32px 0;
+    }
+
+    .clients {
+      color: var(--muted);
+    }
+
+    .cta {
+      display: inline-block;
+      margin-top: 48px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      padding: 12px 24px;
+      background: var(--text);
+      color: var(--bg);
+      text-decoration: none;
+    }
+
+    .cta:hover {
+      opacity: 0.85;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 48px 20px 80px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <table>
-        <tr>
-            <td>Contact</td>
-            <td>@<a href="https://twitter.com/nosilverv">nosilverv</a></td>
-        </tr>
-        <tr>
-            <td>Status</td>
-            <td>2 slots open</td>
-        </tr>
-        <tr>
-            <td>Updated</td>
-            <td>November 2025</td>
-        </tr>
-    </table>
 
-    <h2>Services</h2>
-    
-    <table>
-        <tr>
-            <td>Single Session</td>
-            <td>60-minute co-thinking call. Good for positioning, content strategy, idea architecture, breaking through creative blocks.</td>
-        </tr>
-        <tr>
-            <td>Monthly Retainer</td>
-            <td>1-2 calls/month + ongoing async co-thinking and editing. For 2-4 clients at a time. High-trust, low-volume partnership. No clock-watching, no deliverables.</td>
-        </tr>
-    </table>
+  <h1>Consulting</h1>
 
-    <h2>Select Clients</h2>
-    
-    <div style="margin: 2em 0; padding-left: 1em; border-left: 2px solid currentColor;">
-        <p>"In 30 minutes, [REDACTED] cut through my over-engineered marketing strategy and identified the single highest-leverage action that would actually move the needle. While I was building elaborate systems, he saw the critical path. That's the difference between theoretical marketing knowledge and real virality intuition — he converted complexity into clarity and gave me a direct action with the highest ROI."</p>
-        <p>— Moritz Bierling, Founder of Modern Minuteman</p>
-    </div>
-    
-    <div class="clients">
-        <p>• Michael Stroe</p>
-        <p>• Chris Lakin</p>
-    </div>
+  <h2>Services</h2>
 
-    <h2>Who This Is For</h2>
-    
-    <table>
-        <tr>
-            <td>Good Fit</td>
-            <td>Thinkers, writers, and coaches refining positioning · People with more insight than output · Anyone stuck between too many good ideas and no coherent direction</td>
-        </tr>
-        <tr>
-            <td>Not For</td>
-            <td>People looking for execution-only services · Those wanting a content calendar or ghostwriter</td>
-        </tr>
-    </table>
+  <div class="service">
+    <div class="service-name">Single Session</div>
+    <div class="service-desc">60-minute co-thinking call.</div>
+  </div>
 
-    <div class="cta-section">
-        <h2>Get In Touch</h2>
-        <div class="book-button">◉</div>
-    </div>
+  <div class="divider"></div>
 
-    <button class="theme-toggle" onclick="document.body.classList.toggle('dark')">◐</button>
+  <div class="service">
+    <div class="service-name">Monthly Retainer</div>
+    <div class="service-desc">Ongoing async co-thinking and editing. 1-2 60-minute calls/month possible.</div>
+  </div>
+
+  <h2>Select Clients</h2>
+
+  <p class="clients">Chris Lakin · Moritz Bierling · Michael Stroe</p>
+
+  <a href="https://twitter.com/nosilverv" class="cta">Get in touch</a>
+
 </body>
 </html>
