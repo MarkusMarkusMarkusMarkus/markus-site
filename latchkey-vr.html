@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latchkey VR — Home tours without leaving your couch</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --warm-white: #FDFAF5;
+    --charcoal: #1C1C1E;
+    --charcoal-soft: #2C2A28;
+    --muted: #6B6560;
+    --accent: #C8552A;
+    --border: #DDD8CE;
+    --green: #2D5A3D;
+    --green-light: #D4E8DB;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--warm-white);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--charcoal);
+    overflow-x: hidden;
+  }
+
+  /* grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 20px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(253,250,245,0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .nav-logo .wordmark {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--charcoal);
+    letter-spacing: -0.5px;
+  }
+
+  .nav-logo .tag {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: #F5E6DF;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    align-items: center;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--charcoal); }
+
+  .nav-cta {
+    background: var(--charcoal);
+    color: white !important;
+    padding: 9px 22px;
+    border-radius: 24px;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    transition: background 0.2s !important;
+  }
+
+  .nav-cta:hover { background: var(--accent) !important; color: white !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 60px 80px;
+    position: relative;
+    overflow: hidden;
+    background: var(--charcoal-soft);
+  }
+
+  /* big warm room illustration filling hero */
+  .hero-room {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  /* wall */
+  .hr-wall {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(168deg,
+      #4A3F32 0%,
+      #3A3028 25%,
+      #2E2520 55%,
+      #201A14 100%
+    );
+  }
+
+  /* window — light source */
+  .hr-window-glow {
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(ellipse, rgba(255,235,170,0.18) 0%, rgba(255,220,140,0.06) 40%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hr-window {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 260px;
+    border: 5px solid rgba(220,200,160,0.45);
+    background: linear-gradient(180deg,
+      rgba(180,210,255,0.25) 0%,
+      rgba(140,185,255,0.15) 60%,
+      rgba(100,150,200,0.08) 100%
+    );
+    box-shadow:
+      0 0 80px rgba(200,220,255,0.12),
+      0 0 160px rgba(255,235,170,0.08),
+      inset 0 0 40px rgba(180,210,255,0.08);
+  }
+
+  .hr-window::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: rgba(220,200,160,0.45);
+    transform: translateX(-50%);
+  }
+
+  .hr-window::after {
+    content: '';
+    position: absolute;
+    top: 48%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(220,200,160,0.45);
+  }
+
+  .hr-sill {
+    position: absolute;
+    top: 336px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 230px;
+    height: 16px;
+    background: rgba(200,175,140,0.35);
+    border-radius: 2px;
+  }
+
+  /* VR goggles floating centre stage */
+  .hr-goggles {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -46%);
+    font-size: 160px;
+    line-height: 1;
+    filter: drop-shadow(0 20px 60px rgba(0,0,0,0.6));
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translate(-50%, -46%); }
+    50% { transform: translate(-50%, -50%); }
+  }
+
+  /* floor */
+  .hr-floor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 220px;
+    background: linear-gradient(to top,
+      rgba(15,10,8,0.9) 0%,
+      rgba(30,22,16,0.7) 40%,
+      transparent 100%
+    );
+  }
+
+  /* perspective floor lines */
+  .hr-floor-lines {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 180px;
+    overflow: hidden;
+    opacity: 0.12;
+  }
+
+  /* side wall shadows */
+  .hr-shadow-l {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 200px;
+    background: linear-gradient(to right, rgba(0,0,0,0.55), transparent);
+  }
+
+  .hr-shadow-r {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 200px;
+    background: linear-gradient(to left, rgba(0,0,0,0.4), transparent);
+  }
+
+  /* Hero text */
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 700px;
+    animation: fadeUp 0.9s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,220,160,0.7);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: rgba(255,220,160,0.5);
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 6vw, 80px);
+    font-weight: 900;
+    color: var(--warm-white);
+    line-height: 1.0;
+    letter-spacing: -2px;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: rgba(255,210,150,0.9);
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: rgba(253,250,245,0.6);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-hero-primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 40px;
+    padding: 16px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 24px rgba(200,85,42,0.4);
+  }
+
+  .btn-hero-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(200,85,42,0.5);
+  }
+
+  .btn-hero-ghost {
+    background: transparent;
+    color: rgba(253,250,245,0.75);
+    border: 1px solid rgba(253,250,245,0.2);
+    border-radius: 40px;
+    padding: 16px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-hero-ghost:hover {
+    border-color: rgba(253,250,245,0.5);
+    color: white;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 36px;
+    right: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: rgba(253,250,245,0.35);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, rgba(253,250,245,0.3), transparent);
+    animation: scrollLine 1.8s ease-in-out infinite;
+  }
+
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* HOW IT WORKS */
+  .section {
+    padding: 120px 60px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 4vw, 54px);
+    font-weight: 700;
+    color: var(--charcoal);
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 520px;
+    font-weight: 300;
+  }
+
+  /* HOW IT WORKS — steps */
+  .how-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    margin-top: 70px;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .step {
+    display: flex;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .step:first-child { padding-top: 0; }
+  .step:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    opacity: 0.6;
+    padding-top: 3px;
+    flex-shrink: 0;
+    width: 24px;
+  }
+
+  .step-body h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+
+  .step-body p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* room preview card */
+  .room-card {
+    background: var(--charcoal-soft);
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    height: 480px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.2);
+  }
+
+  .room-card-inner {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(168deg,
+      #4A3F32 0%,
+      #3A3028 25%,
+      #2C2218 55%,
+      #1E1610 100%
+    );
+  }
+
+  .rc-window-glow {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(ellipse, rgba(255,235,170,0.2) 0%, transparent 65%);
+  }
+
+  .rc-window {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 150px;
+    border: 3px solid rgba(220,200,160,0.4);
+    background: linear-gradient(180deg, rgba(160,195,255,0.2) 0%, rgba(120,170,240,0.1) 100%);
+    box-shadow: 0 0 60px rgba(200,220,255,0.1);
+  }
+
+  .rc-window::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: rgba(220,200,160,0.4);
+    transform: translateX(-50%);
+  }
+
+  .rc-window::after {
+    content: '';
+    position: absolute;
+    top: 48%;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(220,200,160,0.4);
+  }
+
+  .rc-floor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 160px;
+    background: linear-gradient(to top, rgba(10,8,5,0.85), transparent);
+  }
+
+  .rc-shadow-l {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 120px;
+    background: linear-gradient(to right, rgba(0,0,0,0.5), transparent);
+  }
+
+  .rc-shadow-r {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 120px;
+    background: linear-gradient(to left, rgba(0,0,0,0.35), transparent);
+  }
+
+  /* sofa in room card */
+  .rc-sofa {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+  }
+
+  .rc-sofa-back {
+    height: 52px;
+    background: linear-gradient(180deg, rgba(140,105,75,0.8) 0%, rgba(115,85,58,0.9) 100%);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.3), inset 0 2px 8px rgba(255,200,150,0.1);
+  }
+
+  .rc-sofa-seat {
+    height: 28px;
+    background: rgba(125,92,62,0.9);
+    margin: 0 10px;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  }
+
+  .rc-table {
+    position: absolute;
+    bottom: 38px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 12px;
+    background: rgba(110,82,55,0.65);
+    border-radius: 3px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  .rc-rug {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    height: 14px;
+    background: rgba(130,95,68,0.3);
+    border-radius: 50%;
+    filter: blur(4px);
+  }
+
+  /* UI overlay on room card */
+  .rc-ui-top {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+  }
+
+  .rc-badge {
+    background: rgba(253,250,245,0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(253,250,245,0.2);
+    color: rgba(253,250,245,0.9);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .rc-badge .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #3FDDAB;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .rc-rooms {
+    display: flex;
+    gap: 6px;
+  }
+
+  .rc-room-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(253,250,245,0.3);
+  }
+
+  .rc-room-dot.active { background: rgba(253,250,245,0.9); }
+
+  .rc-ui-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px;
+    background: linear-gradient(to top, rgba(15,10,6,0.9) 0%, transparent 100%);
+    z-index: 5;
+  }
+
+  .rc-address {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--warm-white);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .rc-meta {
+    font-size: 13px;
+    color: rgba(253,250,245,0.55);
+    margin-bottom: 14px;
+  }
+
+  .rc-nav {
+    display: flex;
+    gap: 8px;
+  }
+
+  .rc-nav-pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid rgba(253,250,245,0.2);
+    color: rgba(253,250,245,0.6);
+    background: rgba(253,250,245,0.05);
+    cursor: pointer;
+  }
+
+  .rc-nav-pill.active {
+    background: rgba(253,250,245,0.15);
+    color: var(--warm-white);
+    border-color: rgba(253,250,245,0.35);
+  }
+
+  /* REQUIREMENTS SECTION */
+  .requirements-section {
+    background: var(--cream);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .req-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 60px;
+  }
+
+  .req-card {
+    background: var(--warm-white);
+    border-radius: 20px;
+    padding: 36px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .req-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  .req-card.buyer::before { background: var(--accent); }
+  .req-card.owner::before { background: var(--green); }
+
+  .req-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .req-who {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .req-who.green { color: var(--green); }
+  .req-who.red { color: var(--accent); }
+
+  .req-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--charcoal);
+    margin-bottom: 12px;
+    letter-spacing: -0.3px;
+  }
+
+  .req-card p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+
+  .req-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .req-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--charcoal);
+    line-height: 1.5;
+  }
+
+  .req-list li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+    font-weight: 600;
+    margin-top: 1px;
+  }
+
+  .req-list.green li::before { color: var(--green); }
+
+  /* COMPARE SECTION */
+  .compare-section { background: var(--warm-white); }
+
+  .compare-table {
+    margin-top: 60px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .compare-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    background: var(--charcoal);
+    color: var(--warm-white);
+    padding: 18px 28px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .compare-header span:not(:first-child) { text-align: center; }
+  .compare-header .vr-col { color: rgba(255,210,150,0.9); }
+
+  .compare-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    font-size: 14px;
+  }
+
+  .compare-row:last-child { border-bottom: none; }
+  .compare-row:nth-child(even) { background: var(--cream); }
+
+  .compare-row .feature { color: var(--charcoal); font-weight: 500; }
+  .compare-row span:not(.feature) { text-align: center; font-size: 16px; }
+  .compare-row .vr-val { font-weight: 700; }
+
+  /* CTA SECTION */
+  .cta-section {
+    background: var(--charcoal-soft);
+    padding: 120px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(200,85,42,0.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .cta-section .section-title { color: var(--warm-white); }
+  .cta-section .section-sub { color: rgba(253,250,245,0.55); margin: 16px auto 40px; }
+
+  .cta-section .btn-hero-primary { margin: 0 auto; display: inline-block; }
+
+  /* footer */
+  footer {
+    background: var(--charcoal);
+    padding: 40px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(253,250,245,0.4);
+    font-size: 13px;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: rgba(253,250,245,0.7);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .hero { padding: 0 24px 60px; }
+    .section { padding: 80px 24px; }
+    .how-grid { grid-template-columns: 1fr; gap: 48px; }
+    .req-grid { grid-template-columns: 1fr; }
+    .compare-section { padding: 80px 24px; }
+    .cta-section { padding: 80px 24px; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 12px; text-align: center; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="wordmark">Latchkey</span>
+    <span class="tag">VR Tours</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">How it works</a></li>
+    <li><a href="#">For sellers</a></li>
+    <li><a href="#">Browse homes</a></li>
+    <li><a href="#" class="nav-cta">Get started</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-room">
+    <div class="hr-wall"></div>
+    <div class="hr-window-glow"></div>
+    <div class="hr-window"></div>
+    <div class="hr-sill"></div>
+    <div class="hr-shadow-l"></div>
+    <div class="hr-shadow-r"></div>
+    <div class="hr-floor"></div>
+    <div class="hr-goggles">🥽</div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Latchkey · Virtual tours</div>
+    <h1>Home tours<br>without leaving<br><em>your couch.</em></h1>
+    <p class="hero-sub">Put on your VR headset and walk through any listed property, any time — no appointments, no agents, no wasted afternoons.</p>
+    <div class="hero-actions">
+      <button class="btn-hero-primary">🥽 Browse tours</button>
+      <button class="btn-hero-ghost">See how it works ↓</button>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="section-label">How it works</div>
+  <div class="section-title">Three steps.<br>No scheduling.</div>
+  <p class="section-sub">Every home on Latchkey is scanned in full 3D. Browse, pick, and walk through — entirely on your own terms.</p>
+
+  <div class="how-grid">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <h3>Browse listed homes</h3>
+          <p>Search by area, price or size. Every property with a 🥽 badge has a full room-by-room 3D scan available — see exactly when it was captured.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <h3>Put on your headset</h3>
+          <p>Compatible with Meta Quest, Apple Vision Pro, and most SteamVR devices. Open the tour link and you're standing in the hallway.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <h3>Walk every room</h3>
+          <p>Move through the property at your own pace. Check ceiling heights, peer out the windows, open wardrobes. Tap hotspots for dimensions and notes.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <h3>Book a physical visit — or make an offer</h3>
+          <p>Shortlist from the couch, then only visit the ones that genuinely excite you. Or, if you've seen enough, go straight to the agent.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room preview card -->
+    <div class="room-card">
+      <div class="room-card-inner"></div>
+      <div class="rc-window-glow"></div>
+      <div class="rc-window"></div>
+      <div class="rc-shadow-l"></div>
+      <div class="rc-shadow-r"></div>
+      <div class="rc-floor"></div>
+      <div class="rc-rug"></div>
+      <div class="rc-sofa">
+        <div class="rc-sofa-back"></div>
+        <div class="rc-sofa-seat"></div>
+      </div>
+      <div class="rc-table"></div>
+
+      <div class="rc-ui-top">
+        <div class="rc-badge">
+          <div class="live-dot"></div>
+          Live scan · 2 days ago
+        </div>
+        <div class="rc-rooms">
+          <div class="rc-room-dot active"></div>
+          <div class="rc-room-dot active"></div>
+          <div class="rc-room-dot"></div>
+          <div class="rc-room-dot"></div>
+          <div class="rc-room-dot"></div>
+        </div>
+      </div>
+
+      <div class="rc-ui-bottom">
+        <div class="rc-address">Rua das Flores 88</div>
+        <div class="rc-meta">Chiado · 4 bed · 130m² · €485,000</div>
+        <div class="rc-nav">
+          <div class="rc-nav-pill active">Living room</div>
+          <div class="rc-nav-pill">Kitchen</div>
+          <div class="rc-nav-pill">Bedroom 1</div>
+          <div class="rc-nav-pill">+2</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REQUIREMENTS -->
+<section class="section requirements-section">
+  <div class="section-label">What you need</div>
+  <div class="section-title">Two things<br>have to exist first.</div>
+  <p class="section-sub">VR tours are powerful — but they depend on both sides playing ball. Here's what makes it work.</p>
+
+  <div class="req-grid">
+    <div class="req-card buyer">
+      <span class="req-icon">🥽</span>
+      <div class="req-who red">For buyers</div>
+      <h3>You need a VR headset</h3>
+      <p>The tour is experienced through a VR device — that's what makes it feel like you're actually standing in the room, not watching a video.</p>
+      <ul class="req-list">
+        <li>Meta Quest 2, 3, or Pro</li>
+        <li>Apple Vision Pro</li>
+        <li>Any SteamVR-compatible headset</li>
+        <li>No headset? A 360° preview is available on any screen, though the immersion is reduced.</li>
+      </ul>
+    </div>
+
+    <div class="req-card owner">
+      <span class="req-icon">📡</span>
+      <div class="req-who green">For sellers</div>
+      <h3>The home needs to be scanned</h3>
+      <p>Before a VR tour can exist, the property has to be mapped — a professional scan using a Latchkey-certified capture device.</p>
+      <ul class="req-list green">
+        <li>Takes about 45 minutes for a standard flat</li>
+        <li>Done by a Latchkey scan partner near you</li>
+        <li>Included free for all Latchkey listings</li>
+        <li>Re-scan available after major changes or staging</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="section compare-section">
+  <div class="section-label">Why bother</div>
+  <div class="section-title">vs. the old way<br>of viewing homes.</div>
+
+  <div class="compare-table">
+    <div class="compare-header">
+      <span>Feature</span>
+      <span class="vr-col">🥽 Latchkey VR</span>
+      <span>Traditional visit</span>
+      <span>Photo listing</span>
+    </div>
+    <div class="compare-row">
+      <span class="feature">Available 24/7</span>
+      <span class="vr-val">✓</span>
+      <span>✗</span>
+      <span>✓</span>
+    </div>
+    <div class="compare-row">
+      <span class="feature">No booking needed</span>
+      <span class="vr-val">✓</span>
+      <span>✗</span>
+      <span>✓</span>
+    </div>
+    <div class="compare-row">
+      <span class="feature">Sense of space & scale</span>
+      <span class="vr-val">✓</span>
+      <span>✓</span>
+      <span>✗</span>
+    </div>
+    <div class="compare-row">
+      <span class="feature">See every room honestly</span>
+      <span class="vr-val">✓</span>
+      <span>✓</span>
+      <span>✗</span>
+    </div>
+    <div class="compare-row">
+      <span class="feature">Time spent per property</span>
+      <span class="vr-val">~10 min</span>
+      <span>~3 hours</span>
+      <span>~2 min</span>
+    </div>
+    <div class="compare-row">
+      <span class="feature">No agent pressure</span>
+      <span class="vr-val">✓</span>
+      <span>✗</span>
+      <span>✓</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="section-label" style="color:rgba(255,210,150,0.6);">Start exploring</div>
+  <h2 class="section-title">Your next home<br>is a headset away.</h2>
+  <p class="section-sub">Browse every scanned property in your area — no account needed to start a tour.</p>
+  <button class="btn-hero-primary">🥽 Browse VR tours</button>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Latchkey</div>
+  <span>© 2025 Latchkey · VR Tours · Self-visits · Property tech</span>
+  <span>Privacy · Terms · Contact</span>
+</footer>
+
+</body>
+</html>
