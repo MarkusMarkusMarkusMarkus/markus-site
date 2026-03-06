@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dunkinator 3000 — AI-Powered Receipt Finder</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --orange: #ff4500;
+  --orange2: #ff6b35;
+  --black: #080808;
+  --paper: #f2ede4;
+  --ink: #1a1510;
+  --mid: #888070;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--paper);
+  font-family: 'Instrument Serif', Georgia, serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CURSOR */
+.cursor {
+  width: 12px; height: 12px;
+  background: var(--orange);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, width 0.2s, height 0.2s;
+  mix-blend-mode: difference;
+}
+.cursor.big { width: 40px; height: 40px; }
+
+/* NOISE overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.6;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
+  background: linear-gradient(to bottom, rgba(8,8,8,0.95), transparent);
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 3px;
+  color: var(--paper);
+}
+.nav-logo em { color: var(--orange); font-style: normal; }
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.nav-links a { color: #666; text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: var(--paper); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 40px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.2s forwards;
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(80px, 16vw, 200px);
+  line-height: 0.9;
+  letter-spacing: -2px;
+  color: var(--paper);
+  opacity: 0;
+  animation: fadeUp 0.8s 0.35s forwards;
+}
+.hero-title .line2 { color: var(--orange); display: block; }
+.hero-title .small { font-size: 0.35em; display: block; color: #333; letter-spacing: 8px; }
+
+.hero-sub {
+  max-width: 560px;
+  font-size: clamp(18px, 2.5vw, 24px);
+  line-height: 1.5;
+  color: #aaa;
+  margin: 40px auto 0;
+  font-style: italic;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.5s forwards;
+}
+
+.hero-cta {
+  margin-top: 52px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.65s forwards;
+}
+
+.btn-primary {
+  background: var(--orange);
+  color: #000;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  padding: 16px 40px;
+  border: none;
+  border-radius: 3px;
+  cursor: none;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 0 #8b2500;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #8b2500;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--paper);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding: 16px 32px;
+  border: 1px solid #333;
+  border-radius: 3px;
+  cursor: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-secondary:hover { border-color: #666; color: var(--paper); }
+
+/* SCROLLING TICKER */
+.ticker-wrap {
+  overflow: hidden;
+  border-top: 1px solid #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+  background: #0d0d0d;
+  padding: 14px 0;
+}
+.ticker {
+  display: flex;
+  gap: 0;
+  animation: ticker 30s linear infinite;
+  white-space: nowrap;
+}
+.ticker-item {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0 48px;
+  color: #444;
+  flex-shrink: 0;
+}
+.ticker-item em {
+  color: var(--orange);
+  font-style: normal;
+}
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* HOW IT WORKS */
+.section {
+  padding: 120px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 7vw, 88px);
+  line-height: 0.95;
+  letter-spacing: -1px;
+  color: var(--paper);
+  margin-bottom: 64px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.step {
+  background: #0e0e0e;
+  padding: 40px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+.step:hover { background: #141414; }
+.step::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background 0.3s;
+}
+.step:hover::before { background: var(--orange); }
+
+.step-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px;
+  line-height: 1;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  display: block;
+}
+.step-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 1px;
+  color: var(--paper);
+  margin-bottom: 16px;
+}
+.step-body {
+  font-size: 16px;
+  line-height: 1.65;
+  color: #888;
+}
+.step-body strong { color: var(--paper); font-style: italic; font-weight: normal; }
+
+/* DEMO / RECEIPT SHOWCASE */
+.demo-section {
+  background: #060606;
+  border-top: 1px solid #141414;
+  border-bottom: 1px solid #141414;
+  padding: 120px 48px;
+}
+.demo-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.demo-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--orange); margin-bottom: 20px; }
+.demo-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 5vw, 68px); line-height: 0.95; color: var(--paper); margin-bottom: 28px; }
+.demo-body { font-size: 17px; line-height: 1.7; color: #888; font-style: italic; margin-bottom: 40px; }
+
+.ai-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+.ai-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 2px;
+  border: 1px solid #2a2a2a;
+  color: #666;
+  letter-spacing: 1px;
+}
+.ai-tag.hot { border-color: #ff450044; color: var(--orange); background: #ff450008; }
+
+/* Receipt cards */
+.receipts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.receipt {
+  background: #0e0e0e;
+  border: 1px solid #1e1e1e;
+  border-left: 3px solid #1e1e1e;
+  border-radius: 4px;
+  padding: 18px 20px;
+  transition: border-left-color 0.3s, background 0.3s;
+  position: relative;
+}
+.receipt:hover { border-left-color: var(--orange); background: #121212; }
+
+.receipt-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.receipt-handle {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--orange);
+}
+.receipt-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: #444;
+}
+.receipt-badge {
+  margin-left: auto;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 2px;
+}
+.receipt-badge.contradiction { background: #ff450015; color: var(--orange); border: 1px solid #ff450033; }
+.receipt-badge.prediction { background: #1515ff15; color: #6688ff; border: 1px solid #6688ff33; }
+.receipt-badge.flip { background: #15ff1515; color: #44cc77; border: 1px solid #44cc7733; }
+
+.receipt-quote {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #bbb;
+  font-style: italic;
+}
+
+.vs-arrow {
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: #333;
+  letter-spacing: 2px;
+  padding: 4px 0;
+}
+
+/* FEATURES GRID */
+.features-section {
+  padding: 120px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+  margin-top: 64px;
+}
+
+.feature {
+  padding: 40px;
+  background: #0a0a0a;
+  position: relative;
+}
+.feature-icon {
+  font-size: 28px;
+  margin-bottom: 20px;
+  display: block;
+}
+.feature-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 1px;
+  color: var(--paper);
+  margin-bottom: 12px;
+}
+.feature-body { font-size: 15px; line-height: 1.7; color: #777; }
+
+/* PRICING */
+.pricing-section {
+  background: var(--paper);
+  padding: 120px 48px;
+  color: var(--ink);
+}
+.pricing-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+
+.pricing-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--orange); margin-bottom: 20px; }
+.pricing-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 7vw, 88px); line-height: 0.95; letter-spacing: -1px; color: var(--ink); margin-bottom: 16px; }
+.pricing-sub { font-size: 20px; color: #888; font-style: italic; margin-bottom: 64px; }
+
+.plans {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px;
+  text-align: left;
+}
+.plan {
+  background: #f8f4eb;
+  padding: 36px 32px;
+  position: relative;
+}
+.plan.featured {
+  background: var(--ink);
+  color: var(--paper);
+}
+.plan-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 16px;
+}
+.plan.featured .plan-name { color: #666; }
+.plan-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 64px;
+  line-height: 1;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.plan.featured .plan-price { color: var(--paper); }
+.plan-period {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: #aaa;
+  margin-bottom: 32px;
+}
+.plan-features {
+  list-style: none;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.plan-features li {
+  font-size: 14px;
+  color: #555;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.plan.featured .plan-features li { color: #aaa; }
+.plan-features li::before { content: '—'; color: var(--orange); font-family: 'DM Mono', monospace; flex-shrink: 0; }
+
+.plan-btn {
+  display: block;
+  text-align: center;
+  padding: 14px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 2px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  text-decoration: none;
+  color: var(--ink);
+  transition: background 0.2s, color 0.2s;
+}
+.plan-btn:hover { background: var(--ink); color: var(--paper); }
+.plan.featured .plan-btn { background: var(--orange); color: #000; border-color: var(--orange); }
+.plan.featured .plan-btn:hover { opacity: 0.88; }
+
+.plan-popular {
+  position: absolute;
+  top: -1px; right: 24px;
+  background: var(--orange);
+  color: #000;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+}
+
+/* SOCIAL PROOF */
+.proof-section {
+  padding: 100px 48px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.proof-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 60px;
+}
+.proof-card {
+  background: #0c0c0c;
+  border: 1px solid #1a1a1a;
+  padding: 28px;
+  border-radius: 4px;
+}
+.proof-quote {
+  font-size: 16px;
+  line-height: 1.65;
+  color: #bbb;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+.proof-author {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: #555;
+}
+.proof-author strong { color: var(--orange); font-weight: normal; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid #141414;
+  padding: 40px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: #333;
+}
+.footer-logo em { color: var(--orange); font-style: normal; }
+.footer-note {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: #333;
+  letter-spacing: 1px;
+}
+
+/* BIG CTA */
+.cta-section {
+  text-align: center;
+  padding: 140px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.cta-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, #ff450012, transparent);
+  pointer-events: none;
+}
+.cta-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(60px, 10vw, 140px);
+  line-height: 0.95;
+  letter-spacing: -2px;
+  color: var(--paper);
+  margin-bottom: 24px;
+  position: relative;
+}
+.cta-sub {
+  font-size: 20px;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s, transform 0.7s;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+a, button { cursor: none; }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="nav-logo">Dunkinator <em>3000</em></div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">AI-powered receipt finder</div>
+  <h1 class="hero-title">
+    Dunkinator
+    <span class="line2">3000</span>
+    <span class="small">Never Dunk Unarmed Again</span>
+  </h1>
+  <p class="hero-sub">
+    AI that reads five years of someone's tweets and surfaces every contradiction, wrong prediction, and hypocritical hot take — right when you need it.
+  </p>
+  <div class="hero-cta">
+    <a href="#pricing" class="btn-primary">Get Early Access</a>
+    <a href="#how" class="btn-secondary">↓ See how it works</a>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">AI contradiction detector</span>
+    <span class="ticker-item"><em>✦</em> OCR tweet capture</span>
+    <span class="ticker-item">wrong prediction tracker</span>
+    <span class="ticker-item"><em>✦</em> timeline search</span>
+    <span class="ticker-item">hypocrisy index™</span>
+    <span class="ticker-item"><em>✦</em> one-click dunk</span>
+    <span class="ticker-item">AI contradiction detector</span>
+    <span class="ticker-item"><em>✦</em> OCR tweet capture</span>
+    <span class="ticker-item">wrong prediction tracker</span>
+    <span class="ticker-item"><em>✦</em> timeline search</span>
+    <span class="ticker-item">hypocrisy index™</span>
+    <span class="ticker-item"><em>✦</em> one-click dunk</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-label reveal">Process</div>
+  <h2 class="section-title reveal">How the dunk<br>gets delivered.</h2>
+
+  <div class="steps">
+    <div class="step reveal">
+      <span class="step-num">01</span>
+      <div class="step-title">Capture</div>
+      <p class="step-body">Hit <strong>⌘⇧6</strong> on any tweet. Dunkinator OCRs it instantly and stores it in your receipt vault, tagged by author and date.</p>
+    </div>
+    <div class="step reveal">
+      <span class="step-num">02</span>
+      <div class="step-title">Analyze</div>
+      <p class="step-body">AI scans the author's entire public history. It hunts for <strong>contradictions, failed predictions, and position flips</strong> — and scores each one by dunkability.</p>
+    </div>
+    <div class="step reveal">
+      <span class="step-num">03</span>
+      <div class="step-title">Dunk</div>
+      <p class="step-body">When the moment arrives, pull up their file. One click copies the <strong>perfectly formatted receipt</strong> with original context, ready to deploy.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO RECEIPTS -->
+<section class="demo-section" id="features">
+  <div class="demo-inner">
+    <div>
+      <div class="demo-label reveal">AI Detection</div>
+      <h2 class="demo-title reveal">Three types of receipt.</h2>
+      <p class="demo-body reveal">The AI doesn't just store what people said. It understands what they <em>meant</em> — and finds where they contradicted it later.</p>
+      <div class="ai-tags reveal">
+        <span class="ai-tag hot">🔴 Contradiction</span>
+        <span class="ai-tag hot">🟠 Failed Prediction</span>
+        <span class="ai-tag hot">🟡 Position Flip</span>
+        <span class="ai-tag">Topic clustering</span>
+        <span class="ai-tag">Semantic similarity</span>
+        <span class="ai-tag">Confidence scoring</span>
+      </div>
+    </div>
+
+    <div class="receipts reveal">
+      <div class="receipt">
+        <div class="receipt-meta">
+          <span class="receipt-handle">@someone_smart</span>
+          <span class="receipt-date">Feb 2021</span>
+          <span class="receipt-badge contradiction">Contradiction</span>
+        </div>
+        <div class="receipt-quote">"Open source AI is fundamentally safer. Transparency = fewer attack vectors. This is table stakes epistemics."</div>
+      </div>
+      <div class="vs-arrow">↓ contradicted by same author 18 months later ↓</div>
+      <div class="receipt">
+        <div class="receipt-meta">
+          <span class="receipt-handle">@someone_smart</span>
+          <span class="receipt-date">Aug 2022</span>
+          <span class="receipt-badge contradiction">Contradiction</span>
+        </div>
+        <div class="receipt-quote">"Open source AI is genuinely dangerous and anyone releasing weights without safety evals is reckless."</div>
+      </div>
+
+      <div style="height:8px;"></div>
+
+      <div class="receipt">
+        <div class="receipt-meta">
+          <span class="receipt-handle">@bigbrainpete</span>
+          <span class="receipt-date">Jan 2020</span>
+          <span class="receipt-badge prediction">Failed Prediction</span>
+        </div>
+        <div class="receipt-quote">"Remote work doesn't work. Companies that go full-remote will underperform in 2 years. Mark this."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="section-label reveal">Everything included</div>
+  <h2 class="section-title reveal">Built for the<br>dedicated dunker.</h2>
+
+  <div class="features-grid">
+    <div class="feature reveal">
+      <span class="feature-icon">🧠</span>
+      <div class="feature-title">Semantic Contradiction Engine</div>
+      <p class="feature-body">Doesn't just keyword match — actually understands meaning. Catches "climate change is overblown" vs "we need urgent climate policy" even if they never share a word.</p>
+    </div>
+    <div class="feature reveal">
+      <span class="feature-icon">📅</span>
+      <div class="feature-title">Full Timeline Ingestion</div>
+      <p class="feature-body">Point it at any public account and it ingests up to 5 years of posts in minutes. Everything indexed, searchable, and scored.</p>
+    </div>
+    <div class="feature reveal">
+      <span class="feature-icon">📸</span>
+      <div class="feature-title">Screenshot Capture (⌘⇧6)</div>
+      <p class="feature-body">One keystroke captures any tweet on screen, OCRs it, and stores it. Works even for deleted tweets you already screenshotted.</p>
+    </div>
+    <div class="feature reveal">
+      <span class="feature-icon">📊</span>
+      <div class="feature-title">Hypocrisy Index™</div>
+      <p class="feature-body">A proprietary score for each tracked author. Higher score = more contradictions, more confidence, higher dunk potential. Sorted by dunking priority.</p>
+    </div>
+    <div class="feature reveal">
+      <span class="feature-icon">🏀</span>
+      <div class="feature-title">One-Click Dunk Formatting</div>
+      <p class="feature-body">Formats the receipts with original dates, context, and the contradiction pair. Paste-ready for replies, quote tweets, or any arena of your choice.</p>
+    </div>
+    <div class="feature reveal">
+      <span class="feature-icon">🔔</span>
+      <div class="feature-title">Contradiction Alerts</div>
+      <p class="feature-body">Watching someone? Get notified the moment they post something that contradicts their archived record. Strike while it's fresh.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="proof-section">
+  <div class="section-label reveal">Word on the street</div>
+  <h2 class="section-title reveal" style="max-width: 600px;">People are saying things.</h2>
+  <div class="proof-grid">
+    <div class="proof-card reveal">
+      <p class="proof-quote">"I've been manually doing this in a Notion doc for three years. The fact that this exists now makes me want to cry."</p>
+      <div class="proof-author"><strong>@receiptkween</strong> · power user</div>
+    </div>
+    <div class="proof-card reveal">
+      <p class="proof-quote">"The contradiction detection is scary good. It caught a flip I never would have found by hand. Dunked successfully."</p>
+      <div class="proof-author"><strong>@dialectics_guy</strong> · beta tester</div>
+    </div>
+    <div class="proof-card reveal">
+      <p class="proof-quote">"Honestly might make people think twice before confidently asserting things online. Social good in disguise."</p>
+      <div class="proof-author"><strong>@epistemicshygiene</strong> · debater</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="pricing-inner">
+    <div class="pricing-label">Pricing</div>
+    <h2 class="pricing-title">Choose your arsenal.</h2>
+    <p class="pricing-sub">All plans include the core receipt vault. Upgrade for AI analysis and alerts.</p>
+
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">$0</div>
+        <div class="plan-period">forever</div>
+        <ul class="plan-features">
+          <li>Manual screenshot capture</li>
+          <li>Up to 3 tracked authors</li>
+          <li>Basic keyword search</li>
+          <li>100 receipt storage</li>
+        </ul>
+        <a href="#" class="plan-btn">Get Started</a>
+      </div>
+
+      <div class="plan featured">
+        <div class="plan-popular">Most Popular</div>
+        <div class="plan-name">Dunker Pro</div>
+        <div class="plan-price">$12</div>
+        <div class="plan-period">per month</div>
+        <ul class="plan-features">
+          <li>AI contradiction detection</li>
+          <li>Unlimited tracked authors</li>
+          <li>Full timeline ingestion</li>
+          <li>Hypocrisy Index™ scoring</li>
+          <li>One-click dunk formatting</li>
+          <li>Unlimited receipt storage</li>
+        </ul>
+        <a href="#" class="plan-btn">Start 7-day trial</a>
+      </div>
+
+      <div class="plan">
+        <div class="plan-name">Dunker Elite</div>
+        <div class="plan-price">$39</div>
+        <div class="plan-period">per month</div>
+        <ul class="plan-features">
+          <li>Everything in Pro</li>
+          <li>Real-time contradiction alerts</li>
+          <li>Team receipt vault sharing</li>
+          <li>API access</li>
+          <li>Priority AI analysis</li>
+        </ul>
+        <a href="#" class="plan-btn">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+  <div class="cta-bg"></div>
+  <h2 class="cta-title reveal">Stop losing<br>arguments you<br>already won.</h2>
+  <p class="cta-sub reveal">The receipts exist. You just couldn't find them. Until now.</p>
+  <a href="#pricing" class="btn-primary reveal">Get Early Access →</a>
+</section>
+
+<footer>
+  <div class="footer-logo">Dunkinator <em>3000</em></div>
+  <div class="footer-note">Arguably evil. Definitely hilarious. © 2025</div>
+</footer>
+
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a, button, .step, .feature, .receipt, .plan').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+});
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(r => observer.observe(r));
+</script>
+
+</body>
+</html>
