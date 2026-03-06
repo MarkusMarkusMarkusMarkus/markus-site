@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beautiful Ideas — Nosilverv</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf9f7;
+      --text: #1a1a1a;
+      --muted: #666;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 80px 24px 120px;
+    }
+
+    .back {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 48px;
+    }
+
+    .back:hover {
+      color: var(--text);
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 500;
+      font-style: italic;
+      margin-bottom: 48px;
+    }
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    a.idea {
+      color: var(--text);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+    }
+
+    a.idea:hover {
+      color: var(--muted);
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 48px 20px 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="back" href="/">← nosilverv</a>
+
+  <h1>Beautiful Ideas</h1>
+
+  <nav>
+    <a class="idea" href="/beautiful-ideas/a-equals-a">A=A (The Identity Relation)</a>
+    <a class="idea" href="/beautiful-ideas/insurance">Insurance</a>
+    <a class="idea" href="/beautiful-ideas/credible-conditional-commitments">Credible Conditional Commitments</a>
+    <a class="idea" href="/beautiful-ideas/loans">Loans</a>
+    <a class="idea" href="/beautiful-ideas/obe">OBE</a>
+  </nav>
+
+</body>
+</html>
