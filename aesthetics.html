@@ -74,7 +74,6 @@
 
     .description {
       margin-bottom: 3rem;
-      max-width: 640px;
     }
     .description p {
       font-size: 0.85rem;
@@ -228,23 +227,7 @@
 
   <div class="description" style="margin-bottom:3rem;">
     <p class="tbd">(TBD: Video explainer)</p>
-    <p class="tbd">(TBD: Turn the strongest 16 compositions [rendered above] into large-format archival prints for exhibition.)</p>
-  </div>
-
-  <p class="section-label">Images</p>
-  <div class="grid" id="grid">
-    <!--
-      Add your images here. Copy one block per image:
-      <div class="grid-item"><img src="images/mine/your-photo.jpg" alt=""></div>
-    -->
-    <div class="grid-placeholder">drop images here</div>
-    <div class="grid-placeholder"></div>
-    <div class="grid-placeholder"></div>
-  </div>
-
-  <div class="lightbox" id="lightbox">
-    <span class="lightbox-close" id="lb-close">close</span>
-    <img id="lb-img" src="" alt="">
+    <p class="tbd">(TBD: Turn the strongest compositions [above] into large-format archival prints for exhibition.)</p>
   </div>
 
   <div class="page-footer">
@@ -277,16 +260,6 @@
       if (e.key === 'Escape') closeLightbox();
     });
 
-    const lightbox = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lb-img');
-
-    document.querySelectorAll('.grid-item img').forEach(img => {
-      img.addEventListener('click', () => { lbImg.src = img.src; lightbox.classList.add('open'); });
-    });
-
-    function closeLightbox() { lightbox.classList.remove('open'); lbImg.src = ''; }
-    document.getElementById('lb-close').addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
   </script>
 
 </body>
