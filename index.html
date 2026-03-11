@@ -1,100 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Nosilverv</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosilverv</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
-          :root {
-                  --bg: #faf9f7;
-                  --text: #1a1a1a;
-                  --muted: #666;
-          }
-          * {
-                  margin: 0;
-                  padding: 0;
-                  box-sizing: border-box;
-          }
-          body {
-                  font-family: 'EB Garamond', Georgia, serif;
-                  font-size: 18px;
-                  line-height: 1.65;
-                  color: var(--text);
-                  background: var(--bg);
-                  max-width: 600px;
-                  margin: 0 auto;
-                  padding: 80px 24px 120px;
-          }
-          h1 {
-                  font-size: 1.4rem;
-                  font-weight: 500;
-                  margin-bottom: 48px;
-          }
-          nav {
-                  display: flex;
-                  flex-direction: column;
-                  gap: 12px;
-          }
-          .section-label {
-                  font-family: 'JetBrains Mono', monospace;
-                  font-size: 0.7rem;
-                  text-transform: uppercase;
-                  letter-spacing: 0.12em;
-                  color: var(--muted);
-                  margin-top: 40px;
-                  margin-bottom: 10px;
-          }
-          a {
-                  color: var(--text);
-                  text-decoration: none;
-                  font-family: 'JetBrains Mono', monospace;
-                  font-size: 0.9rem;
-          }
-          a:hover {
-                  color: var(--muted);
-          }
-          @media (max-width: 600px) {
-                  body {
-                            padding: 48px 20px 80px;
-                  }
-          }
-        </style>
+      :root {
+        --bg: #faf9f7;
+        --text: #1a1a1a;
+        --muted: #666;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'EB Garamond', Georgia, serif;
+        font-size: 18px;
+        line-height: 1.65;
+        color: var(--text);
+        background: var(--bg);
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 80px 24px 120px;
+      }
+      h1 {
+        font-size: 1.4rem;
+        font-weight: 500;
+        margin-bottom: 48px;
+      }
+      nav {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .section-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        margin-top: 40px;
+        margin-bottom: 10px;
+      }
+      a {
+        color: var(--text);
+        text-decoration: none;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.9rem;
+      }
+      a:hover {
+        color: var(--muted);
+      }
+      .accordion-toggle {
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .accordion-toggle:hover {
+        color: var(--text);
+      }
+      .accordion-arrow {
+        font-size: 0.65rem;
+        transition: transform 0.2s ease;
+        display: inline-block;
+      }
+      .accordion-arrow.open {
+        transform: rotate(180deg);
+      }
+      .accordion-body {
+        display: none;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 4px;
+      }
+      .accordion-body.open {
+        display: flex;
+      }
+        body {
+          padding: 48px 20px 80px;
+        }
+      }
+    </style>
   </head>
   <body>
-      <h1>Nosilverv</h1>
+    <h1>Nosilverv</h1>
     <nav>
-          <div class="section-label">Mockups</div>
-          <a href="/ccc.html">COMMIT — Credible Conditional Commitments</a>
-          <a href="/dunkinator-3000.html">Dunkinator 3000</a>
-          <a href="/latchkey-padlock.html">Latchkey — Self-Tour Visits</a>
-          <a href="/latchkey-vr.html">Latchkey VR — Home Tours</a>
-          <a href="/mood-app.html">Mood? — Vibe Matching</a>
-          <a href="/voidview.html">Voidview - Your City, Ad-free</a>
 
-          <div class="section-label">Dreams</div>
-          <a href="/dream-physics.html">Dream Physics Survey</a>
+      <div class="section-label accordion-toggle" id="mockups-toggle">
+        Mockups <span class="accordion-arrow">↓</span>
+      </div>
+      <div class="accordion-body" id="mockups-body">
+        <a href="/ccc.html">COMMIT — Credible Conditional Commitments</a>
+        <a href="/dunkinator-3000.html">Dunkinator 3000</a>
+        <a href="/dream-physics.html">Dream Physics Survey</a>
+        <a href="/latchkey-padlock.html">Latchkey — Self-Tour Visits</a>
+        <a href="/latchkey-vr.html">Latchkey VR — Home Tours</a>
+        <a href="/mood-app.html">Mood? — Vibe Matching</a>
+        <a href="/voidview.html">Voidview — Your City, Ad-free</a>
+      </div>
 
-          <div class="section-label">AESTHETICS</div>
-          <a href="/aesthetics">Hand-crafted</a>
-          <a href="/aesthetics-midjourney">Midjourney</a>
+      <div class="section-label">Aesthetics</div>
+      <a href="/aesthetics">Hand-crafted</a>
+      <a href="/aesthetics-midjourney">Midjourney</a>
 
-          <div class="section-label">Beautiful Ideas</div>
-          <a href="/beautiful-ideas">Beauty</a>
-      
-          <div class="section-label">Work Together</div>
-          <a href="/consulting">Consulting</a>
-          <a href="/recco">RECCO</a>
+      <div class="section-label">Beautiful Ideas</div>
+      <a href="/beautiful-ideas">Beauty</a>
 
-          <div class="section-label">Elsewhere</div>
-          <a href="https://x.com/nosilverv">Twitter</a>
-          <a href="https://rivalvoices.substack.com/">Substack</a>
+      <div class="section-label">Writing</div>
+      <a href="/internet.html">Internet</a>
+      <a href="/books.html">Books</a>
+
+      <div class="section-label">About</div>
+      <a href="/history.html">History</a>
+
+      <div class="section-label">Work Together</div>
+      <a href="/consulting">Consulting</a>
+      <a href="/recco">RECCO</a>
+
+      <div class="section-label">Elsewhere</div>
+      <a href="https://x.com/nosilverv">Twitter</a>
+      <a href="https://rivalvoices.substack.com/">Substack</a>
+
     </nav>
+    <script>
+      document.getElementById('mockups-toggle').addEventListener('click', function() {
+        const body = document.getElementById('mockups-body');
+        const arrow = this.querySelector('.accordion-arrow');
+        body.classList.toggle('open');
+        arrow.classList.toggle('open');
+      });
+    </script>
   </body>
 </html>
-    </nav></h1>
-  </body>
-    </style></title>
-  </head>
