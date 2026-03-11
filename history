@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Things I've been a part of — Nosilverv</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f5f0;
+      --ink: #18160f;
+      --mid: #7a7260;
+      --faint: #c8c0b0;
+      --rule: #d8d0c0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--ink);
+      background: var(--bg);
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 68px 32px 140px;
+    }
+
+    .back {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--mid);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      margin-bottom: 56px;
+      transition: color 0.15s;
+    }
+    .back:hover { color: var(--ink); }
+    .back::before { content: '← '; }
+
+    h1 {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .header-note {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--mid);
+      letter-spacing: 0.06em;
+      margin-bottom: 60px;
+    }
+
+    .section {
+      margin-bottom: 52px;
+    }
+
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 0;
+    }
+
+    /* Work entries — name + desc stacked, meta on right */
+    .entry {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: start;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .entry-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .entry-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .entry-name a {
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--faint);
+      transition: border-color 0.15s;
+    }
+    .entry-name a:hover { border-color: var(--ink); }
+
+    .entry-desc {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11.5px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    .entry-desc a {
+      color: var(--mid);
+      text-decoration: none;
+      border-bottom: 1px solid var(--faint);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .entry-desc a:hover {
+      color: var(--ink);
+      border-color: var(--mid);
+    }
+
+    /* Community entries — single line, year flush right */
+    .community-entry {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: baseline;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .community-name {
+      font-size: 15px;
+      color: var(--ink);
+    }
+
+    .community-note {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--faint);
+      text-align: right;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 500px) {
+      body { padding: 44px 20px 80px; }
+      h1 { font-size: 2rem; }
+      .entry { grid-template-columns: 1fr; }
+      .community-entry { grid-template-columns: 1fr; }
+      .community-note { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="/" class="back">Nosilverv</a>
+  <div class="section">
+    <div class="section-label">Things I've been a part of</div>
+
+    <div class="entry">
+      <div class="entry-left">
+        <div class="entry-name">ErasmusLX</div>
+        <div class="entry-desc">My first job :)</div>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-left">
+        <div class="entry-name">SalviaPortugal</div>
+        <div class="entry-desc">Had the #1 ranked Salvia website in Portugal (back when it was legal).</div>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-left">
+        <div class="entry-name"><a href="https://leverage.institute/" target="_blank" rel="noopener">Leverage Research</a></div>
+        <div class="entry-desc">Researcher.</div>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-left">
+        <div class="entry-name">Reserve</div>
+        <div class="entry-desc">Early team member.</div>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-left">
+        <div class="entry-name">ThreadHelper</div>
+        <div class="entry-desc">Precursor to <a href="https://www.community-archive.org/" target="_blank" rel="noopener">CA</a>.</div>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-left">
+        <div class="entry-name">Portuguese Politics</div>
+        <div class="entry-desc">Two-week stint. Not for me.</div>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-left">
+        <div class="entry-name">Comms Consulting</div>
+        <div class="entry-desc"><a href="https://rivalvoices.substack.com/p/my-work-with-chris-lakin" target="_blank" rel="noopener">More →</a></div>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-left">
+        <div class="entry-name">Independent Researcher</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-label">Communities</div>
+
+    <div class="community-entry">
+      <div class="community-name">LessWrong</div>
+      <div class="community-note">2012 · organised the Vienna meetup group</div>
+    </div>
+
+    <div class="community-entry">
+      <div class="community-name">Effective Altruism</div>
+      <div class="community-note">2013 · participated in the very first EA Summit</div>
+    </div>
+
+    <div class="community-entry">
+      <div class="community-name">TPOT</div>
+      <div class="community-note">2019</div>
+    </div>
+
+    <div class="community-entry">
+      <div class="community-name">JessCamp</div>
+    </div>
+
+  </div>
+
+</body>
+</html>
