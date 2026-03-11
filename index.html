@@ -56,33 +56,7 @@
       a:hover {
         color: var(--muted);
       }
-      .accordion-toggle {
-        cursor: pointer;
-        user-select: none;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .accordion-toggle:hover {
-        color: var(--text);
-      }
-      .accordion-arrow {
-        font-size: 0.65rem;
-        transition: transform 0.2s ease;
-        display: inline-block;
-      }
-      .accordion-arrow.open {
-        transform: rotate(180deg);
-      }
-      .accordion-body {
-        display: none;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 4px;
-      }
-      .accordion-body.open {
-        display: flex;
-      }
+      @media (max-width: 600px) {
         body {
           padding: 48px 20px 80px;
         }
@@ -93,18 +67,16 @@
     <h1>Nosilverv</h1>
     <nav>
 
-      <div class="section-label accordion-toggle" id="mockups-toggle">
-        Mockups <span class="accordion-arrow">↓</span>
-      </div>
-      <div class="accordion-body" id="mockups-body">
-        <a href="/ccc.html">COMMIT — Credible Conditional Commitments</a>
-        <a href="/dunkinator-3000.html">Dunkinator 3000</a>
-        <a href="/dream-physics.html">Dream Physics Survey</a>
-        <a href="/latchkey-padlock.html">Latchkey — Self-Tour Visits</a>
-        <a href="/latchkey-vr.html">Latchkey VR — Home Tours</a>
-        <a href="/mood-app.html">Mood? — Vibe Matching</a>
-        <a href="/voidview.html">Voidview — Your City, Ad-free</a>
-      </div>
+      <div class="section-label">Mockups</div>
+      <a href="/ccc.html">COMMIT — Credible Conditional Commitments</a>
+      <a href="/dunkinator-3000.html">Dunkinator 3000</a>
+      <a href="/latchkey-padlock.html">Latchkey — Self-Tour Visits</a>
+      <a href="/latchkey-vr.html">Latchkey VR — Home Tours</a>
+      <a href="/mood-app.html">Mood? — Vibe Matching</a>
+      <a href="/voidview.html">Voidview — Your City, Ad-free</a>
+
+      <div class="section-label">Dreams</div>
+      <a href="/dream-physics.html">Dream Physics Survey</a>
 
       <div class="section-label">Aesthetics</div>
       <a href="/aesthetics">Hand-crafted</a>
@@ -129,13 +101,5 @@
       <a href="https://rivalvoices.substack.com/">Substack</a>
 
     </nav>
-    <script>
-      document.getElementById('mockups-toggle').addEventListener('click', function() {
-        const body = document.getElementById('mockups-body');
-        const arrow = this.querySelector('.accordion-arrow');
-        body.classList.toggle('open');
-        arrow.classList.toggle('open');
-      });
-    </script>
   </body>
 </html>
