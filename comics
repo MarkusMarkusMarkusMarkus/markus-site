@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comics — nosilverv</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Courier+Prime:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --ink: #d4cfca;
+    --muted: #6b6560;
+    --accent: #c8b49a;
+    --dim: #1c1b22;
+    --border: #2a2935;
+  }
+
+  html { background: var(--bg); color: var(--ink); }
+
+  body {
+    font-family: 'IM Fell English', Georgia, serif;
+    min-height: 100vh;
+    padding: 80px 24px 120px;
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* Grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .wrap { position: relative; z-index: 1; }
+
+  /* Nav */
+  .eyebrow {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 48px;
+  }
+
+  .eyebrow a {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid #333;
+  }
+
+  .eyebrow a:hover { color: var(--accent); border-color: var(--accent); }
+
+  h1 {
+    font-size: clamp(36px, 7vw, 60px);
+    font-weight: 400;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 56px;
+  }
+
+  /* Body text */
+  .prose {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+
+  .prose em { font-style: italic; }
+
+  .prose a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+  }
+
+  .prose a:hover { opacity: 0.7; }
+
+  /* TBD placeholder */
+  .tbd {
+    font-family: 'Courier Prime', monospace;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--muted);
+    margin: 28px 0;
+  }
+
+  /* Section divider */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 56px 0;
+  }
+
+  /* Timeline section */
+  .timeline { margin-top: 56px; }
+
+  .era {
+    margin-bottom: 64px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .era:nth-child(1) { animation-delay: 0.1s; }
+  .era:nth-child(2) { animation-delay: 0.2s; }
+  .era:nth-child(3) { animation-delay: 0.3s; }
+
+  .era-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .era-year {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .era-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    color: #3a3845;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* The fragmented sentence */
+  .sentence-fragment {
+    font-size: clamp(18px, 3.5vw, 26px);
+    font-style: italic;
+    color: var(--accent);
+    line-height: 1.3;
+    margin-bottom: 24px;
+    opacity: 0.9;
+  }
+
+  /* Image grid */
+  .img-grid {
+    display: grid;
+    gap: 8px;
+  }
+
+  .img-grid.single { grid-template-columns: 1fr; }
+  .img-grid.double { grid-template-columns: 1fr 1fr; }
+  .img-grid.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+  .img-grid img {
+    width: 100%;
+    display: block;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    filter: grayscale(10%);
+    transition: filter 0.3s ease, transform 0.3s ease;
+    cursor: zoom-in;
+  }
+
+  .img-grid img:hover {
+    filter: grayscale(0%);
+    transform: scale(1.01);
+    z-index: 2;
+    position: relative;
+  }
+
+  /* Lightbox */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 15, 0.95);
+    z-index: 100;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .lightbox.active { display: flex; }
+
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    box-shadow: 0 0 80px rgba(0,0,0,0.8);
+  }
+
+  .lightbox-close {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  /* Footer */
+  footer {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.1em;
+    margin-top: 80px;
+  }
+
+  footer a { color: var(--muted); text-decoration: none; border-bottom: 1px solid #333; }
+  footer a:hover { color: var(--accent); }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 500px) {
+    body { padding: 48px 20px 80px; }
+    .img-grid.triple { grid-template-columns: 1fr 1fr; }
+    .img-grid.double { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow"><a href="/">nosilverv.com</a> · Comics</div>
+
+  <h1>Comics</h1>
+
+  <p class="prose">As a kid I loved comics. I did my own fan comics: of Pokémon, of Calvin &amp; Hobbes. As I grew up I got into folklore, Mike Mignola, and MTG.</p>
+
+  <div class="tbd">(TBD: Add Calvin &amp; Hobbes and Pokémon fan comics)</div>
+
+  <p class="prose">Later got into them again because of Hellboy.</p>
+
+  <p class="prose">A few years ago I tried to learn how to draw. I used <em><a href="https://www.drawright.com/" target="_blank">Drawing on the Right Side of the Brain</a></em>, which served me well.</p>
+
+  <div class="tbd">(TBD: Add drawings &amp; paintings)</div>
+
+  <hr class="divider">
+
+  <div class="timeline">
+
+    <!-- 2024 -->
+    <div class="era">
+      <div class="era-header">
+        <span class="era-year">2024</span>
+        <span class="era-label">ChatGPT</span>
+      </div>
+      <p class="sentence-fragment">Thankfully, I'm not constrained by</p>
+      <div class="img-grid single">
+        <img src="https://raw.githubusercontent.com/MarkusMarkusMarkusMarkus/markus-site/main/images/ChatGPT-1.jpg" alt="Comic 2024" loading="lazy">
+      </div>
+    </div>
+
+    <!-- 2025 -->
+    <div class="era">
+      <div class="era-header">
+        <span class="era-year">2025</span>
+        <span class="era-label">ChatGPT</span>
+      </div>
+      <p class="sentence-fragment">my lack of skill</p>
+      <div class="img-grid single">
+        <img src="https://raw.githubusercontent.com/MarkusMarkusMarkusMarkus/markus-site/main/images/ChatGPT-2.png" alt="Comic 2025" loading="lazy">
+      </div>
+    </div>
+
+    <!-- 2026 -->
+    <div class="era">
+      <div class="era-header">
+        <span class="era-year">Early 2026</span>
+        <span class="era-label">Midjourney</span>
+      </div>
+      <p class="sentence-fragment">anymore</p>
+      <div class="img-grid triple">
+        <img src="https://raw.githubusercontent.com/MarkusMarkusMarkusMarkus/markus-site/main/images/merfolk-comic-1.png" alt="Merfolk Comic" loading="lazy">
+        <img src="https://raw.githubusercontent.com/MarkusMarkusMarkusMarkus/markus-site/main/images/kill-the-buddha-1.png" alt="Kill the Buddha 1" loading="lazy">
+        <img src="https://raw.githubusercontent.com/MarkusMarkusMarkusMarkus/markus-site/main/images/kill-the-buddha-2.png" alt="Kill the Buddha 2" loading="lazy">
+        <img src="https://raw.githubusercontent.com/MarkusMarkusMarkusMarkus/markus-site/main/images/kill-the-buddha-3.png" alt="Kill the Buddha 3" loading="lazy">
+        <img src="https://raw.githubusercontent.com/MarkusMarkusMarkusMarkus/markus-site/main/images/classic-monster-1.png" alt="Classic Monster" loading="lazy">
+        <img src="https://raw.githubusercontent.com/MarkusMarkusMarkusMarkus/markus-site/main/images/john-in-hell-1.png" alt="John in Hell 1" loading="lazy">
+        <img src="https://raw.githubusercontent.com/MarkusMarkusMarkusMarkus/markus-site/main/images/john-in-hell-2.png" alt="John in Hell 2" loading="lazy">
+        <img src="https://raw.githubusercontent.com/MarkusMarkusMarkusMarkus/markus-site/main/images/john-in-hell-3.png" alt="John in Hell 3" loading="lazy">
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <a href="/">nosilverv.com</a>
+  </footer>
+
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" id="lightbox-close">✕ close</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxClose = document.getElementById('lightbox-close');
+
+  document.querySelectorAll('.img-grid img').forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightbox.classList.add('active');
+    });
+  });
+
+  lightbox.addEventListener('click', () => lightbox.classList.remove('active'));
+  lightboxClose.addEventListener('click', () => lightbox.classList.remove('active'));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') lightbox.classList.remove('active');
+  });
+</script>
+</body>
+</html>
