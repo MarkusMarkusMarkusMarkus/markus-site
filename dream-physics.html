@@ -3,380 +3,485 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dream Physics — Survey</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<title>Dream Physics — Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Courier+Prime:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    background: #deeef8;
-    color: #1a2a38;
-    font-family: 'Lora', Georgia, serif;
-    min-height: 100vh;
-    padding: 72px 40px 100px;
-    background-image:
-      radial-gradient(ellipse at 20% 10%, #c8e0f4 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, #d4e8f8 0%, transparent 50%),
-      radial-gradient(ellipse at 60% 30%, #e8f4ff 0%, transparent 40%);
+  :root {
+    --bg: #0a0a0f;
+    --ink: #d4cfca;
+    --muted: #6b6560;
+    --accent: #c8b49a;
+    --dim: #1c1b22;
+    --yes: #a8c4a2;
+    --no: #c4a2a2;
+    --bar-bg: #1e1d26;
   }
 
-  .page { max-width: 640px; margin: 0 auto; }
+  html { background: var(--bg); color: var(--ink); }
 
-  header { margin-bottom: 56px; }
+  body {
+    font-family: 'IM Fell English', Georgia, serif;
+    min-height: 100vh;
+    padding: 80px 24px 120px;
+    max-width: 680px;
+    margin: 0 auto;
+    position: relative;
+  }
 
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .wrap { position: relative; z-index: 1; }
+
+  /* Header */
   .eyebrow {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Courier Prime', monospace;
     font-size: 10px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: #5a8eb8;
-    margin-bottom: 18px;
+    color: var(--muted);
+    margin-bottom: 32px;
   }
 
   h1 {
-    font-size: 38px;
+    font-size: clamp(32px, 6vw, 52px);
     font-weight: 400;
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    color: #0e1e30;
-    margin-bottom: 14px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
   }
 
-  h1 em { font-style: italic; color: #3a7aaa; }
+  h1 em { font-style: italic; color: var(--accent); }
 
-  .intro {
-    font-size: 14px;
-    line-height: 1.7;
-    color: #5a7a96;
-    font-style: italic;
-    border-left: 2px solid rgba(90,142,184,0.3);
-    padding-left: 16px;
-  }
-
-  .category { margin-bottom: 44px; }
-
-  .cat-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #7aaac8;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .cat-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(90,142,184,0.2);
-  }
-
-  .q {
-    display: grid;
-    grid-template-columns: 24px 1fr auto;
-    gap: 0 14px;
-    align-items: center;
-    padding: 12px 10px;
-    border-radius: 8px;
-    margin-bottom: 2px;
-    transition: background 0.15s;
-  }
-
-  .q:hover { background: rgba(255,255,255,0.35); }
-  .q:has(input:checked) { background: rgba(255,255,255,0.5); }
-
-  .q-n {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: #9ac0d8;
-    text-align: right;
-  }
-
-  .q-text {
-    font-size: 15.5px;
-    line-height: 1.4;
-    color: #2a4a62;
-  }
-
-  .q:has(input:checked) .q-text { color: #0e2030; }
-
-  .yn {
-    display: flex;
-    gap: 3px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-  }
-
-  .yn label {
-    cursor: pointer;
-    padding: 5px 11px;
-    border-radius: 20px;
-    border: 1.5px solid rgba(90,142,184,0.25);
-    color: #9ac0d8;
-    background: rgba(255,255,255,0.3);
-    transition: all 0.15s;
-    user-select: none;
-  }
-
-  .yn label:hover { border-color: #7aaac8; color: #3a6a90; background: rgba(255,255,255,0.6); }
-
-  .yn input { display: none; }
-
-  .yn input.yes:checked + label {
-    background: #c8eedd;
-    border-color: #4aaa7a;
-    color: #1a6a44;
-  }
-
-  .yn input.no:checked + label {
-    background: #fadadd;
-    border-color: #d47a88;
-    color: #8a2a3a;
-  }
-
-  .submit-section {
-    margin-top: 48px;
-    padding: 40px 36px;
-    background: rgba(255,255,255,0.55);
-    border-radius: 20px;
-    text-align: center;
-    border: 1.5px solid rgba(90,142,184,0.2);
-  }
-
-  .submit-note {
-    font-style: italic;
-    color: #5a7a96;
-    font-size: 15px;
-    margin-bottom: 28px;
-    line-height: 1.7;
-  }
-
-  .submit-btn {
-    display: inline-block;
-    padding: 15px 52px;
-    background: #3a7aaa;
-    color: white;
-    border: none;
-    border-radius: 40px;
-    font-family: 'IBM Plex Mono', monospace;
+  .subtitle {
+    font-family: 'Courier Prime', monospace;
     font-size: 12px;
-    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 64px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Section */
+  .section-label {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 24px rgba(58,122,170,0.35);
+    color: var(--muted);
+    margin-bottom: 28px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #222;
   }
 
-  .submit-btn:hover {
-    background: #2a5a8a;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(58,122,170,0.4);
+  .section { margin-bottom: 60px; }
+
+  /* Bar rows */
+  .row {
+    margin-bottom: 22px;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fadeUp 0.5s ease forwards;
   }
 
-  .submit-btn:active { transform: translateY(0); }
-
-  .answered-count {
-    margin-top: 16px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: #8aaac0;
-    letter-spacing: 0.1em;
-  }
-
-  .thankyou { display: none; padding: 12px 0; }
-  .thankyou .moon { font-size: 44px; margin-bottom: 16px; }
-  .thankyou p {
-    font-style: italic;
-    color: #3a6a90;
-    font-size: 17px;
-    line-height: 1.7;
-  }
-
-  .progress-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: rgba(90,142,184,0.15);
-    z-index: 10;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #7ab4d8, #5a8eb8);
-    width: 0%;
-    transition: width 0.4s ease;
-  }
-
-  footer {
-    margin-top: 40px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: #8aaac0;
-    letter-spacing: 0.08em;
+  .row-header {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+
+  .q-num {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  .q-label {
+    font-size: 14px;
+    color: var(--ink);
+    flex: 1;
+    font-style: italic;
+  }
+
+  .pct-yes {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+
+  .bar-track {
+    height: 3px;
+    background: var(--bar-bg);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 0%;
+  }
+
+  .bar-fill.high { background: var(--yes); }
+  .bar-fill.mid  { background: var(--accent); }
+  .bar-fill.low  { background: var(--no); }
+
+  .votes {
+    font-family: 'Courier Prime', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Findings */
+  .findings {
+    background: var(--dim);
+    border: 1px solid #2a2935;
+    padding: 32px 36px;
+    margin-bottom: 60px;
+    position: relative;
+  }
+
+  .findings::before {
+    content: '✦';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg);
+    padding: 0 12px;
+    color: var(--accent);
+    font-size: 12px;
+  }
+
+  .findings h2 {
+    font-size: 11px;
+    font-family: 'Courier Prime', monospace;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .findings p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .findings p:last-child { margin-bottom: 0; }
+
+  /* Extremes grid */
+  .extremes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 60px;
+  }
+
+  .extreme-box {
+    border: 1px solid #2a2935;
+    padding: 24px;
+  }
+
+  .extreme-box h3 {
+    font-family: 'Courier Prime', monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .extreme-box.yes-box h3 { color: var(--yes); }
+  .extreme-box.no-box h3  { color: var(--no); }
+
+  .extreme-item {
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink);
+  }
+
+  .extreme-item span {
+    font-family: 'Courier Prime', monospace;
+    font-style: normal;
+    font-size: 11px;
+    float: right;
+    color: var(--muted);
+  }
+
+  /* Divider */
+  .divider {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    margin: 48px 0;
+    opacity: 0.5;
+  }
+
+  /* Footer */
+  footer {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.1em;
+    margin-top: 80px;
+  }
+
+  footer a {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid #333;
+  }
+
+  footer a:hover { color: var(--accent); border-color: var(--accent); }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* stagger delays */
+  .row:nth-child(1)  { animation-delay: 0.05s; }
+  .row:nth-child(2)  { animation-delay: 0.10s; }
+  .row:nth-child(3)  { animation-delay: 0.15s; }
+  .row:nth-child(4)  { animation-delay: 0.20s; }
+  .row:nth-child(5)  { animation-delay: 0.25s; }
+  .row:nth-child(6)  { animation-delay: 0.30s; }
+  .row:nth-child(7)  { animation-delay: 0.35s; }
+  .row:nth-child(8)  { animation-delay: 0.40s; }
+
+  @media (max-width: 500px) {
+    .extremes { grid-template-columns: 1fr; }
+    body { padding: 48px 20px 80px; }
+    .findings { padding: 24px 20px; }
   }
 </style>
 </head>
 <body>
-<div class="page">
+<div class="wrap">
 
-  <header>
-    <div class="eyebrow">The Dream Physics Project</div>
-    <h1>The <em>shared physics</em><br>of dreams</h1>
-    <p class="intro">Answer based on your general dream experience. There are no right answers.</p>
-  </header>
+  <div class="eyebrow">The Dream Physics Project · Results</div>
+  <h1>What holds, <em>and what breaks,</em><br>in the night.</h1>
+  <p class="subtitle">11 questions · ~65–78 respondents each · collected Aug 2023</p>
 
-  <div class="category">
-    <div class="cat-label">Motor &amp; Movement</div>
-    <div class="q"><div class="q-n">01</div><div class="q-text">Can you punch hard?</div><div class="yn"><input type="radio" name="q01" class="yes" id="q01y"><label for="q01y">YES</label><input type="radio" name="q01" class="no" id="q01n"><label for="q01n">NO</label></div></div>
-    <div class="q"><div class="q-n">02</div><div class="q-text">Can you run fast?</div><div class="yn"><input type="radio" name="q02" class="yes" id="q02y"><label for="q02y">YES</label><input type="radio" name="q02" class="no" id="q02n"><label for="q02n">NO</label></div></div>
-    <div class="q"><div class="q-n">03</div><div class="q-text">Can you run backwards?</div><div class="yn"><input type="radio" name="q03" class="yes" id="q03y"><label for="q03y">YES</label><input type="radio" name="q03" class="no" id="q03n"><label for="q03n">NO</label></div></div>
-    <div class="q"><div class="q-n">04</div><div class="q-text">Can you jump high?</div><div class="yn"><input type="radio" name="q04" class="yes" id="q04y"><label for="q04y">YES</label><input type="radio" name="q04" class="no" id="q04n"><label for="q04n">NO</label></div></div>
-    <div class="q"><div class="q-n">05</div><div class="q-text">When you fall, do you float down?</div><div class="yn"><input type="radio" name="q05" class="yes" id="q05y"><label for="q05y">YES</label><input type="radio" name="q05" class="no" id="q05n"><label for="q05n">NO</label></div></div>
-    <div class="q"><div class="q-n">06</div><div class="q-text">Can you fly?</div><div class="yn"><input type="radio" name="q06" class="yes" id="q06y"><label for="q06y">YES</label><input type="radio" name="q06" class="no" id="q06n"><label for="q06n">NO</label></div></div>
-    <div class="q"><div class="q-n">07</div><div class="q-text">Can you swim normally?</div><div class="yn"><input type="radio" name="q07" class="yes" id="q07y"><label for="q07y">YES</label><input type="radio" name="q07" class="no" id="q07n"><label for="q07n">NO</label></div></div>
-    <div class="q"><div class="q-n">08</div><div class="q-text">Can you lift heavy objects?</div><div class="yn"><input type="radio" name="q08" class="yes" id="q08y"><label for="q08y">YES</label><input type="radio" name="q08" class="no" id="q08n"><label for="q08n">NO</label></div></div>
+  <!-- Key Findings Box -->
+  <div class="findings">
+    <h2>Patterns in the data</h2>
+    <p>The dream body is liberated upward. Flying (85%) and jumping high (88%) are nearly universal — but the arm that punches is almost always weak (only 32% can punch hard).</p>
+    <p>Language is surprisingly intact. More than half can read, and nearly three-quarters can perceive numbers. The symbolic layer of waking life doesn't fully dissolve.</p>
+    <p>The mundane fails quietly. Light switches, faces in mirrors, stable objects — the ordinary infrastructure of consensus reality is where the seams show.</p>
   </div>
 
-  <div class="category">
-    <div class="cat-label">Vision &amp; The Body</div>
-    <div class="q"><div class="q-n">09</div><div class="q-text">Can you see your own hands?</div><div class="yn"><input type="radio" name="q09" class="yes" id="q09y"><label for="q09y">YES</label><input type="radio" name="q09" class="no" id="q09n"><label for="q09n">NO</label></div></div>
-    <div class="q"><div class="q-n">10</div><div class="q-text">Do mirrors show your face correctly?</div><div class="yn"><input type="radio" name="q10" class="yes" id="q10y"><label for="q10y">YES</label><input type="radio" name="q10" class="no" id="q10n"><label for="q10n">NO</label></div></div>
-    <div class="q"><div class="q-n">11</div><div class="q-text">Can you feel pain?</div><div class="yn"><input type="radio" name="q11" class="yes" id="q11y"><label for="q11y">YES</label><input type="radio" name="q11" class="no" id="q11n"><label for="q11n">NO</label></div></div>
-    <div class="q"><div class="q-n">12</div><div class="q-text">Can you feel temperature — cold, heat?</div><div class="yn"><input type="radio" name="q12" class="yes" id="q12y"><label for="q12y">YES</label><input type="radio" name="q12" class="no" id="q12n"><label for="q12n">NO</label></div></div>
-    <div class="q"><div class="q-n">13</div><div class="q-text">Can you taste or smell?</div><div class="yn"><input type="radio" name="q13" class="yes" id="q13y"><label for="q13y">YES</label><input type="radio" name="q13" class="no" id="q13n"><label for="q13n">NO</label></div></div>
-    <div class="q"><div class="q-n">14</div><div class="q-text">Is your vision clear?</div><div class="yn"><input type="radio" name="q14" class="yes" id="q14y"><label for="q14y">YES</label><input type="radio" name="q14" class="no" id="q14n"><label for="q14n">NO</label></div></div>
-  </div>
-
-  <div class="category">
-    <div class="cat-label">Language &amp; Symbols</div>
-    <div class="q"><div class="q-n">15</div><div class="q-text">Can you read text?</div><div class="yn"><input type="radio" name="q15" class="yes" id="q15y"><label for="q15y">YES</label><input type="radio" name="q15" class="no" id="q15n"><label for="q15n">NO</label></div></div>
-    <div class="q"><div class="q-n">16</div><div class="q-text">Do numbers stay stable when you look at them?</div><div class="yn"><input type="radio" name="q16" class="yes" id="q16y"><label for="q16y">YES</label><input type="radio" name="q16" class="no" id="q16n"><label for="q16n">NO</label></div></div>
-    <div class="q"><div class="q-n">17</div><div class="q-text">Can you write?</div><div class="yn"><input type="radio" name="q17" class="yes" id="q17y"><label for="q17y">YES</label><input type="radio" name="q17" class="no" id="q17n"><label for="q17n">NO</label></div></div>
-    <div class="q"><div class="q-n">18</div><div class="q-text">Can you have a coherent conversation?</div><div class="yn"><input type="radio" name="q18" class="yes" id="q18y"><label for="q18y">YES</label><input type="radio" name="q18" class="no" id="q18n"><label for="q18n">NO</label></div></div>
-    <div class="q"><div class="q-n">19</div><div class="q-text">Can you count objects?</div><div class="yn"><input type="radio" name="q19" class="yes" id="q19y"><label for="q19y">YES</label><input type="radio" name="q19" class="no" id="q19n"><label for="q19n">NO</label></div></div>
-  </div>
-
-  <div class="category">
-    <div class="cat-label">Physics &amp; Environment</div>
-    <div class="q"><div class="q-n">20</div><div class="q-text">Can you breathe underwater?</div><div class="yn"><input type="radio" name="q20" class="yes" id="q20y"><label for="q20y">YES</label><input type="radio" name="q20" class="no" id="q20n"><label for="q20n">NO</label></div></div>
-    <div class="q"><div class="q-n">21</div><div class="q-text">Does turning on a light switch work?</div><div class="yn"><input type="radio" name="q21" class="yes" id="q21y"><label for="q21y">YES</label><input type="radio" name="q21" class="no" id="q21n"><label for="q21n">NO</label></div></div>
-    <div class="q"><div class="q-n">22</div><div class="q-text">Does fire behave normally?</div><div class="yn"><input type="radio" name="q22" class="yes" id="q22y"><label for="q22y">YES</label><input type="radio" name="q22" class="no" id="q22n"><label for="q22n">NO</label></div></div>
-    <div class="q"><div class="q-n">23</div><div class="q-text">Does time feel normal?</div><div class="yn"><input type="radio" name="q23" class="yes" id="q23y"><label for="q23y">YES</label><input type="radio" name="q23" class="no" id="q23n"><label for="q23n">NO</label></div></div>
-    <div class="q"><div class="q-n">24</div><div class="q-text">Do doors open and close normally?</div><div class="yn"><input type="radio" name="q24" class="yes" id="q24y"><label for="q24y">YES</label><input type="radio" name="q24" class="no" id="q24n"><label for="q24n">NO</label></div></div>
-    <div class="q"><div class="q-n">25</div><div class="q-text">Can you drive a car?</div><div class="yn"><input type="radio" name="q25" class="yes" id="q25y"><label for="q25y">YES</label><input type="radio" name="q25" class="no" id="q25n"><label for="q25n">NO</label></div></div>
-  </div>
-
-  <div class="category">
-    <div class="cat-label">Objects &amp; Technology</div>
-    <div class="q"><div class="q-n">26</div><div class="q-text">Have you seen your phone in a dream?</div><div class="yn"><input type="radio" name="q26" class="yes" id="q26y"><label for="q26y">YES</label><input type="radio" name="q26" class="no" id="q26n"><label for="q26n">NO</label></div></div>
-    <div class="q"><div class="q-n">27</div><div class="q-text">Does your phone work — can you dial, text?</div><div class="yn"><input type="radio" name="q27" class="yes" id="q27y"><label for="q27y">YES</label><input type="radio" name="q27" class="no" id="q27n"><label for="q27n">NO</label></div></div>
-    <div class="q"><div class="q-n">28</div><div class="q-text">Do screens display legible content?</div><div class="yn"><input type="radio" name="q28" class="yes" id="q28y"><label for="q28y">YES</label><input type="radio" name="q28" class="no" id="q28n"><label for="q28n">NO</label></div></div>
-    <div class="q"><div class="q-n">29</div><div class="q-text">Can you use a keyboard?</div><div class="yn"><input type="radio" name="q29" class="yes" id="q29y"><label for="q29y">YES</label><input type="radio" name="q29" class="no" id="q29n"><label for="q29n">NO</label></div></div>
-    <div class="q"><div class="q-n">30</div><div class="q-text">Do objects stay the same when you look away and back?</div><div class="yn"><input type="radio" name="q30" class="yes" id="q30y"><label for="q30y">YES</label><input type="radio" name="q30" class="no" id="q30n"><label for="q30n">NO</label></div></div>
-  </div>
-
-  <div class="category">
-    <div class="cat-label">Agency &amp; Control</div>
-    <div class="q"><div class="q-n">31</div><div class="q-text">Do you know you're dreaming while it's happening?</div><div class="yn"><input type="radio" name="q31" class="yes" id="q31y"><label for="q31y">YES</label><input type="radio" name="q31" class="no" id="q31n"><label for="q31n">NO</label></div></div>
-    <div class="q"><div class="q-n">32</div><div class="q-text">Can you choose where to go?</div><div class="yn"><input type="radio" name="q32" class="yes" id="q32y"><label for="q32y">YES</label><input type="radio" name="q32" class="no" id="q32n"><label for="q32n">NO</label></div></div>
-    <div class="q"><div class="q-n">33</div><div class="q-text">Can you wake yourself up intentionally?</div><div class="yn"><input type="radio" name="q33" class="yes" id="q33y"><label for="q33y">YES</label><input type="radio" name="q33" class="no" id="q33n"><label for="q33n">NO</label></div></div>
-    <div class="q"><div class="q-n">34</div><div class="q-text">Can you change the dream's setting by willing it?</div><div class="yn"><input type="radio" name="q34" class="yes" id="q34y"><label for="q34y">YES</label><input type="radio" name="q34" class="no" id="q34n"><label for="q34n">NO</label></div></div>
-    <div class="q"><div class="q-n">35</div><div class="q-text">Do other people in dreams behave believably?</div><div class="yn"><input type="radio" name="q35" class="yes" id="q35y"><label for="q35y">YES</label><input type="radio" name="q35" class="no" id="q35n"><label for="q35n">NO</label></div></div>
-  </div>
-
-  <div class="submit-section">
-    <div id="form-state">
-      <p class="submit-note">When you're ready, send your answers into the dream archive.<br>Every response adds to our collective map.</p>
-      <button class="submit-btn" onclick="handleSubmit()">✦ Submit Responses ✦</button>
-      <div class="answered-count" id="count">0 of 35 answered</div>
+  <!-- Extremes -->
+  <div class="extremes">
+    <div class="extreme-box yes-box">
+      <h3>Most universal</h3>
+      <div class="extreme-item">Jump high <span>88%</span></div>
+      <div class="extreme-item">Fly <span>85%</span></div>
+      <div class="extreme-item">See hands <span>77%</span></div>
+      <div class="extreme-item">See numbers <span>74%</span></div>
     </div>
-    <div class="thankyou" id="thankyou">
-      <div class="moon">🌙</div>
-      <p>Your dream physics have been recorded.<br><em>Thank you for mapping the night.</em></p>
+    <div class="extreme-box no-box">
+      <h3>Most broken</h3>
+      <div class="extreme-item">Punch hard <span>32%</span></div>
+      <div class="extreme-item">Run backwards <span>35%</span></div>
+      <div class="extreme-item">Float down <span>36%*</span></div>
+      <div class="extreme-item">Phone seen <span>51%</span></div>
     </div>
   </div>
 
-  <footer>
-    <span>The Dream Physics Project</span>
-    <span>35 questions · v1</span>
+  <!-- Motor & Movement -->
+  <div class="section">
+    <div class="section-label">Motor &amp; Movement</div>
+
+    <div class="row">
+      <div class="row-header">
+        <span class="q-num">01</span>
+        <span class="q-label">Can you punch hard?</span>
+        <span class="pct-yes">32%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill low" data-pct="32"></div></div>
+      <div class="votes">72 votes</div>
+    </div>
+
+    <div class="row">
+      <div class="row-header">
+        <span class="q-num">02</span>
+        <span class="q-label">Can you run fast?</span>
+        <span class="pct-yes">56%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill mid" data-pct="56"></div></div>
+      <div class="votes">73 votes</div>
+    </div>
+
+    <div class="row">
+      <div class="row-header">
+        <span class="q-num">03</span>
+        <span class="q-label">Can you run backwards?</span>
+        <span class="pct-yes">35%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill low" data-pct="35"></div></div>
+      <div class="votes">65 votes</div>
+    </div>
+
+    <div class="row">
+      <div class="row-header">
+        <span class="q-num">04</span>
+        <span class="q-label">Can you jump high?</span>
+        <span class="pct-yes">88%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill high" data-pct="88"></div></div>
+      <div class="votes">68 votes</div>
+    </div>
+
+    <div class="row">
+      <div class="row-header">
+        <span class="q-num">05</span>
+        <span class="q-label">When you fall, do you float down?</span>
+        <span class="pct-yes">64%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill mid" data-pct="64"></div></div>
+      <div class="votes">58 votes</div>
+    </div>
+
+    <div class="row">
+      <div class="row-header">
+        <span class="q-num">06</span>
+        <span class="q-label">Can you fly?</span>
+        <span class="pct-yes">85%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill high" data-pct="85"></div></div>
+      <div class="votes">72 votes</div>
+    </div>
+  </div>
+
+  <!-- Vision & Body -->
+  <div class="section">
+    <div class="section-label">Vision &amp; The Body</div>
+
+    <div class="row">
+      <div class="row-header">
+        <span class="q-num">09</span>
+        <span class="q-label">Can you see your own hands?</span>
+        <span class="pct-yes">77%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill high" data-pct="77"></div></div>
+      <div class="votes">65 votes</div>
+    </div>
+  </div>
+
+  <!-- Language & Symbols -->
+  <div class="section">
+    <div class="section-label">Language &amp; Symbols</div>
+
+    <div class="row">
+      <div class="row-header">
+        <span class="q-num">15</span>
+        <span class="q-label">Can you read text?</span>
+        <span class="pct-yes">59%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill mid" data-pct="59"></div></div>
+      <div class="votes">65 votes</div>
+    </div>
+
+    <div class="row">
+      <div class="row-header">
+        <span class="q-num">16</span>
+        <span class="q-label">Do numbers stay stable when you look at them?</span>
+        <span class="pct-yes">74%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill high" data-pct="74"></div></div>
+      <div class="votes">61 votes</div>
+    </div>
+  </div>
+
+  <!-- Physics & Environment -->
+  <div class="section">
+    <div class="section-label">Physics &amp; Environment</div>
+
+    <div class="row">
+      <div class="row-header">
+        <span class="q-num">20</span>
+        <span class="q-label">Can you breathe underwater?</span>
+        <span class="pct-yes">55%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill mid" data-pct="55"></div></div>
+      <div class="votes">67 votes</div>
+    </div>
+  </div>
+
+  <!-- Objects & Technology -->
+  <div class="section">
+    <div class="section-label">Objects &amp; Technology</div>
+
+    <div class="row">
+      <div class="row-header">
+        <span class="q-num">26</span>
+        <span class="q-label">Have you seen your phone in a dream?</span>
+        <span class="pct-yes">51%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill mid" data-pct="51"></div></div>
+      <div class="votes">78 votes</div>
+    </div>
+  </div>
+
+  <div class="divider">· · ✦ · ·</div>
+
+  <p style="font-size:12px; color: var(--muted); font-family: 'Courier Prime', monospace; line-height:1.7; margin-bottom: 24px;">
+    * "Float down" was phrased as a yes/no on falling behavior — the 64% yes means most people <em>do</em> float rather than fall normally. Gravity is optional on the way down, but the arm that swings remains mortal.
+  </p>
+
+  <p style="font-size:12px; color: var(--muted); font-family: 'Courier Prime', monospace; line-height:1.7;">
+    These results represent 11 of 35 questions. Full survey at <a href="dream-physics.html">dream-physics.html</a>
+  </p>
+
+  <footer style="margin-top: 64px;">
+    The Dream Physics Project · <a href="https://nosilverv.com">nosilverv.com</a>
   </footer>
 
 </div>
 
-<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-
 <script>
-  const total = 35;
-  function countAnswered() {
-    const names = new Set();
-    document.querySelectorAll('input[type=radio]:checked').forEach(el => names.add(el.name));
-    return names.size;
-  }
-  function update() {
-    const n = countAnswered();
-    document.getElementById('progress').style.width = (n / total * 100) + '%';
-    document.getElementById('count').textContent = n + ' of ' + total + ' answered';
-  }
-  async function handleSubmit() {
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyC8rsvgOHE1-jID-rdXFl-ONPGF5mfehI9kZ1muzn1WbBNjKz4CXR-tMzb3WzevIu-GA/exec';
-    const btn = document.querySelector('.submit-btn');
-    btn.textContent = 'Sending…';
-    btn.disabled = true;
-
-    // Map question names to readable labels
-    const qLabels = {
-      q01:'Can you punch hard?', q02:'Can you run fast?', q03:'Can you run backwards?',
-      q04:'Can you jump high?', q05:'When you fall, do you float down?', q06:'Can you fly?',
-      q07:'Can you swim normally?', q08:'Can you lift heavy objects?',
-      q09:'Can you see your own hands?', q10:'Do mirrors show your face correctly?',
-      q11:'Can you feel pain?', q12:'Can you feel temperature?', q13:'Can you taste or smell?',
-      q14:'Is your vision clear?', q15:'Can you read text?',
-      q16:'Do numbers stay stable?', q17:'Can you write?',
-      q18:'Can you have a coherent conversation?', q19:'Can you count objects?',
-      q20:'Can you breathe underwater?', q21:'Does a light switch work?',
-      q22:'Does fire behave normally?', q23:'Does time feel normal?',
-      q24:'Do doors open normally?', q25:'Can you drive a car?',
-      q26:'Have you seen your phone?', q27:'Does your phone work?',
-      q28:'Do screens show legible content?', q29:'Can you use a keyboard?',
-      q30:'Do objects stay the same when you look away?',
-      q31:'Do you know you are dreaming?', q32:'Can you choose where to go?',
-      q33:'Can you wake up intentionally?', q34:'Can you change the setting by willing it?',
-      q35:'Do other people behave believably?'
-    };
-
-    const data = { _subject: 'Dream Physics Survey Response' };
-    document.querySelectorAll('input[type=radio]:checked').forEach(el => {
-      data[qLabels[el.name] || el.name] = el.classList.contains('yes') ? 'YES' : 'NO';
-    });
-
-    try {
-      const res = await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      if (res.ok) {
-        document.getElementById('form-state').style.display = 'none';
-        document.getElementById('thankyou').style.display = 'block';
-        document.getElementById('progress').style.width = '100%';
-      } else {
-        btn.textContent = '✦ Submit Responses ✦';
-        btn.disabled = false;
-        alert('Something went wrong — please try again.');
+  // Animate bars when in view
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const fill = e.target.querySelector('.bar-fill');
+        if (fill) {
+          const pct = fill.dataset.pct;
+          // color logic
+          if (pct >= 70) fill.classList.add('high');
+          else if (pct >= 45) fill.classList.add('mid');
+          else fill.classList.add('low');
+          setTimeout(() => { fill.style.width = pct + '%'; }, 100);
+        }
+        observer.unobserve(e.target);
       }
-    } catch (e) {
-      btn.textContent = '✦ Submit Responses ✦';
-      btn.disabled = false;
-      alert('Could not connect — please try again.');
-    }
-  }
-  document.querySelectorAll('input[type=radio]').forEach(el => el.addEventListener('change', update));
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.row').forEach(r => observer.observe(r));
 </script>
 </body>
 </html>
