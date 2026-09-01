@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Effective Dharma — Doing the most good by doing nothing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1F3A5F; --teal:#0E8A8A; --teal-dark:#0A6B6B;
+    --ink:#1B2430; --muted:#5C6B7A; --line:#DDE3EA; --bg:#F5F7FA; --paper:#fff;
+    --sq-empty:#E4E9EF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:Inter,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;font-size:16px}
+  a{color:var(--teal-dark)}
+  h1,h2,h3{line-height:1.2;margin:0 0 .5rem}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  nav{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{font-weight:700;color:var(--navy);text-decoration:none;font-size:18px;display:flex;align-items:center;gap:10px}
+  .brand i{width:26px;height:26px;border-radius:50%;background:var(--teal);display:inline-block;position:relative}
+  .brand i::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--paper)}
+  nav ul{list-style:none;display:flex;gap:24px;margin:0;padding:0;font-size:14px;font-weight:500}
+  nav ul a{color:var(--muted);text-decoration:none}
+  nav ul a:hover{color:var(--navy)}
+  .btn{background:var(--teal);color:#fff;border:0;border-radius:6px;padding:10px 16px;font:inherit;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;display:inline-block}
+  .btn:hover{background:var(--teal-dark)}
+  .btn.ghost{background:transparent;color:var(--navy);border:1.5px solid var(--navy)}
+  .btn.ghost:hover{background:#EEF2F7}
+
+  .hero{background:var(--navy);color:#fff;padding:72px 0 64px}
+  .hero h1{font-size:clamp(30px,4.6vw,48px);font-weight:700;max-width:720px;letter-spacing:-.01em}
+  .hero p{max-width:600px;font-size:18px;color:#C8D3E0;margin:16px 0 28px}
+  .hero .actions{display:flex;gap:12px;flex-wrap:wrap}
+  .hero .btn.ghost{color:#fff;border-color:#fff}
+  .hero .btn.ghost:hover{background:rgba(255,255,255,.1)}
+
+  .stats{background:var(--paper);border-bottom:1px solid var(--line)}
+  .stats .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+  .stat{padding:28px 20px;border-right:1px solid var(--line)}
+  .stat:last-child{border-right:0}
+  .stat b{display:block;font-size:30px;font-weight:700;color:var(--navy);letter-spacing:-.02em}
+  .stat span{font-size:13px;color:var(--muted)}
+  .stat small{display:block;font-size:12px;color:var(--muted);margin-top:4px;font-style:italic}
+
+  section{padding:56px 0}
+  section.paper{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  section h2{font-size:28px;color:var(--navy);font-weight:700;letter-spacing:-.01em}
+  .lede{color:var(--muted);max-width:640px;margin:0 0 28px;font-size:17px}
+
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:24px;font-size:14px}
+  .controls span{color:var(--muted);margin-right:4px}
+  .chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer;color:var(--ink)}
+  .chip[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .chip:focus-visible,.btn:focus-visible{outline:3px solid #8FD3D3;outline-offset:2px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:22px;position:relative}
+  .card.top{border-color:var(--teal);border-width:2px}
+  .badge{position:absolute;top:-11px;left:18px;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:.02em}
+  .card h3{font-size:18px;color:var(--navy);margin-top:2px}
+  .card .where{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .card p.desc{font-size:14px;margin:0 0 16px;color:#33404D}
+  .meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:13px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:14px}
+  .meta div{color:var(--muted)}
+  .meta div b{color:var(--ink);font-weight:600;display:block;font-size:14px}
+  .axis{display:grid;grid-template-columns:150px 1fr 24px;align-items:center;gap:10px;font-size:13px;margin:6px 0}
+  .axis .name{color:var(--muted)}
+  .axis .val{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+  .sq{display:flex;gap:3px}
+  .sq i{height:12px;background:var(--sq-empty);border-radius:2px;flex:1}
+  .sq i.on{background:var(--teal)}
+  .sq i.on.hi{background:var(--navy)}
+  .axis.active .name{color:var(--navy);font-weight:600}
+  .verdict{margin-top:14px;padding:10px 12px;background:var(--bg);border-radius:6px;font-size:13px}
+  .verdict b{color:var(--navy)}
+
+  .legend{font-size:13px;color:var(--muted);margin-top:22px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  .legend .sq{width:70px}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+  .cols h3,.paper-block h3{font-size:18px;color:var(--navy)}
+  .cols p{font-size:15px;color:#33404D}
+  .paper-block{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:28px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-weight:600;color:var(--muted);font-size:13px}
+  td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+  .note{font-size:12px;color:var(--muted);margin-top:10px}
+
+  .causes{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .cause{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:22px}
+  .cause h3{font-size:17px;color:var(--navy)}
+  .cause p{font-size:14px;color:#33404D;margin:0 0 10px}
+  .cause .score{font-size:13px;color:var(--muted)}
+  .cause .score b{color:var(--teal-dark)}
+
+  /* career guide */
+  .careers{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+  .career{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:22px}
+  .career h3{font-size:17px;color:var(--navy)}
+  .career p{font-size:14px;color:#33404D;margin:0 0 12px}
+  .career dl{margin:0;font-size:13px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+  .career dt{color:var(--muted)}
+  .career dd{margin:0;font-weight:600}
+  .career .fit{margin-top:12px;padding:10px 12px;background:var(--bg);border-radius:6px;font-size:13px}
+
+  /* mistakes */
+  .mistakes{max-width:720px}
+  .mistakes li{margin:0 0 18px;padding-left:12px;border-left:3px solid var(--line);font-size:15px;color:#33404D}
+  .mistakes li b{color:var(--navy);display:block;font-size:13px;margin-bottom:2px}
+  .mistakes ol{list-style:none;padding:0;margin:0}
+
+  .cta{background:var(--navy);color:#fff;text-align:center;padding:64px 0}
+  .cta h2{color:#fff}
+  .cta p{color:#C8D3E0;max-width:560px;margin:8px auto 24px}
+
+  footer{background:var(--paper);border-top:1px solid var(--line);padding:32px 0;font-size:13px;color:var(--muted)}
+  footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  footer p{margin:0 0 6px}
+
+  @media (max-width:900px){
+    nav ul{display:none}
+    .stats .wrap{grid-template-columns:1fr 1fr}
+    .stat:nth-child(2){border-right:0}
+    .stat{border-bottom:1px solid var(--line)}
+    .cols,.causes{grid-template-columns:1fr}
+    .axis{grid-template-columns:120px 1fr 24px}
+  }
+  @media (prefers-reduced-motion:no-preference){ .sq i{transition:background .25s} }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#"><i></i>Effective Dharma</a>
+    <ul>
+      <li><a href="#retreats">Top retreats</a></li>
+      <li><a href="#method">Research</a></li>
+      <li><a href="#causes">Cause priorities</a></li>
+      <li><a href="#career">Career guide</a></li>
+      <li><a href="#mistakes">Our mistakes</a></li>
+    </ul>
+    <a class="btn" href="#pledge">Give 10% of your attention</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>We use evidence and careful reasoning to find the most effective ways to end suffering.</h1>
+    <p>Every year, billions of moments of experience go unattended. Our researchers rigorously evaluate retreat centres, lineages and techniques so you can end all suffering, permanently, at the lowest cost per insight.</p>
+    <div class="actions">
+      <a class="btn" href="#retreats">See our top retreats</a>
+      <a class="btn ghost" href="#method">How we rank</a>
+    </div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="wrap">
+    <div class="stat"><b>41</b><span>retreat centres evaluated</span><small>3 of our analysts did not return</small></div>
+    <div class="stat"><b>€4,300</b><span>median cost per stream-entry</span><small>self-reported; unverified; contested by the reporter</small></div>
+    <div class="stat"><b>2.1×</b><span>counterfactual equanimity vs. a nice walk</span><small>90% CI: 0.3× – 7.9×</small></div>
+    <div class="stat"><b>0</b><span>selves found</span><small>we keep looking</small></div>
+  </div>
+</div>
+
+<section id="retreats">
+  <div class="wrap">
+    <h2>Top-rated retreats, 2026</h2>
+    <p class="lede">We recommend retreats that are evidence-backed, highly cost-effective, and have room for more sitting. Scores are out of 10. Costs are approximate and were mostly obtained by asking someone who had been. Rankings are updated whenever a researcher comes out of silence.</p>
+
+    <div class="controls" role="group" aria-label="Sort retreats by axis">
+      <span>Sort by</span>
+      <button class="chip" data-axis="overall" aria-pressed="true">Overall</button>
+      <button class="chip" data-axis="cost" aria-pressed="false">Cost-effectiveness</button>
+      <button class="chip" data-axis="tract" aria-pressed="false">Tractability</button>
+      <button class="chip" data-axis="negl" aria-pressed="false">Neglectedness</button>
+      <button class="chip" data-axis="evid" aria-pressed="false">Evidence base</button>
+      <button class="chip" data-axis="room" aria-pressed="false">Room for more sitting</button>
+      <button class="chip" data-axis="risk" aria-pressed="false">Ego-death risk</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="legend">
+      <div class="sq"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on hi"></i><i class="on hi"></i></div>
+      <span>Dark squares indicate the score exceeded our model's ability to explain it.</span>
+      <span>“Ego-death risk” is scored as a benefit. We are aware this is controversial.</span>
+    </div>
+  </div>
+</section>
+
+<section id="method" class="paper">
+  <div class="wrap">
+    <h2>How we rank</h2>
+    <p class="lede">Our methodology is fully transparent. We convert every claimed outcome into Liberation-Adjusted Life Years (LALYs), discount for reporting bias, then divide by cost. The remainder is your practice.</p>
+    <div class="cols">
+      <div>
+        <h3>Moral weights</h3>
+        <p>Comparing outcomes across retreats requires a common unit. We surveyed 12 practitioners on how they would trade off different mental states. Eleven were asleep. The twelfth said the question dissolves on inspection. We have used the twelfth’s answer for all weights.</p>
+        <h3>Counterfactual impact</h3>
+        <p>We only credit a retreat for insights you would not otherwise have had. Most insights, on review, were available at home for free. We adjust accordingly.</p>
+        <h3>Reporting bias</h3>
+        <p>Retreatants systematically over-report attainments in the week after a retreat and systematically under-report them six months later, when they have stopped talking about it. We use the six-month figure.</p>
+        <h3>Room for more sitting</h3>
+        <p>Some centres are capacity-constrained: an additional retreatant displaces another retreatant, producing no net LALYs. We prefer interventions where your marginal hour is genuinely additional. Your own chair scores perfectly on this axis, which is a problem for the retreat sector and we have said so.</p>
+      </div>
+      <div class="paper-block">
+        <h3>Exchange rates (2026)</h3>
+        <table>
+          <thead><tr><th>Outcome</th><th>LALYs</th></tr></thead>
+          <tbody>
+            <tr><td>One hour of equanimity</td><td>0.0011</td></tr>
+            <tr><td>One hour of bliss</td><td>0.0016</td></tr>
+            <tr><td>One hour of bliss you then clung to</td><td>−0.0020</td></tr>
+            <tr><td>Stream-entry (verified by a teacher)</td><td>4.0</td></tr>
+            <tr><td>Stream-entry (verified by you)</td><td>0.1</td></tr>
+            <tr><td>Stream-entry (announced on Twitter)</td><td>−1.5</td></tr>
+            <tr><td>Noticing you are angry</td><td>0.0004</td></tr>
+            <tr><td>Noticing you are angry at this table</td><td>0.0008</td></tr>
+            <tr><td>Full liberation</td><td>n/a</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Full liberation is excluded from the model because the model is a form of clinging.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="causes">
+  <div class="wrap">
+    <h2>Cause prioritization</h2>
+    <p class="lede">Not all suffering is equally tractable. Using our importance–neglectedness–tractability framework, we have identified the cause areas where an additional hour of attention does the most good.</p>
+    <div class="causes">
+      <div class="cause">
+        <h3>Long-sitterism</h3>
+        <p>The vast majority of your moments have not happened yet. If you weight future suffering equally with present suffering, this cause dominates every other consideration. Critics say this is a reason to worry more. We say it is a reason to sit longer.</p>
+        <div class="score">Priority: <b>Highest</b></div>
+      </div>
+      <div class="cause">
+        <h3>Rebirth risk</h3>
+        <p>A small chance of an astronomically long sequence of lives implies an astronomically large expected value from ending the sequence. We are neutral on whether rebirth is real; the expected-value math works either way, which we find suspicious but not disqualifying.</p>
+        <div class="score">Priority: <b>High, if real</b></div>
+      </div>
+      <div class="cause">
+        <h3>Wild-animal jhana</h3>
+        <p>Trillions of animals may be experiencing states of concentration and have no framework for reporting them. This is likely the largest unmeasured contemplative population on Earth. Highly neglected. Tractability unknown.</p>
+        <div class="score">Priority: <b>Speculative</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="career" class="paper">
+  <div class="wrap">
+    <h2>Career guide: which practice should you spend your 10,000 hours on?</h2>
+    <p class="lede">Your practice is the single biggest decision you will make with your attention. Most people choose one by accident, based on whichever teacher was nearest, and then defend it for forty years. We think you can do better. Below, the major practice paths, rated for impact, personal fit, and career capital — how much of your progress transfers if you switch lineage later.</p>
+    <div class="careers" id="careers"></div>
+    <p class="note" style="margin-top:22px">Personal-fit scores are based on a three-question quiz we have since retired, because all three questions were “are you sure?”</p>
+  </div>
+</section>
+
+<section id="mistakes">
+  <div class="wrap">
+    <h2>Our mistakes</h2>
+    <p class="lede">We think it is important to be honest about where we have gone wrong. This page is updated whenever we notice, which our methodology suggests is the point.</p>
+    <div class="mistakes">
+      <ol>
+        <li><b>2019</b>We ranked a retreat highly on the strength of a single glowing testimonial. The testimonial was the teacher’s.</li>
+        <li><b>2020</b>We rated every online retreat as “highly tractable” without adjusting for the presence of a Leave Meeting button. Effect sizes were revised down by 60%.</li>
+        <li><b>2021</b>We built a cost-effectiveness model for a Zen retreat and sent it to the centre for comment. They replied that the model was “exactly the problem.” We have listed this as a limitation.</li>
+        <li><b>2022</b>We double-counted the counterfactual. Every retreat was credited for the insights you would have had anyway, and then debited for them, and then credited again. Rankings were unchanged, which worried us more.</li>
+        <li><b>2023</b>A senior researcher left mid-evaluation to ordain. We have recorded this as a positive outcome for the retreat and a negative outcome for headcount, and we are unsure which column is which.</li>
+        <li><b>2024</b>We omitted the Silent Hike control condition from the published rankings. When restored, it outperformed nine of the fourteen retreats. We received letters.</li>
+        <li><b>2025</b>Our moral-weights survey was administered on day nine of a ten-day course. Responses included “yes,” “no,” and a drawing of the dining hall.</li>
+        <li><b>2026</b>We attempted to compute the moral weight of a single moment of awareness. The spreadsheet has not been the same since, and neither has the analyst.</li>
+        <li><b>Ongoing</b>We continue to assume there is someone reading this page who will benefit from it. We have not been able to locate them.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="pledge">
+  <div class="wrap">
+    <h2>Take the 10% pledge</h2>
+    <p>Members pledge to direct at least 10% of their attention, for the rest of their lives, to whatever is actually happening. Most fail within four seconds. This is fine. Begin again.</p>
+    <a class="btn" href="#" onclick="event.preventDefault();this.textContent='Pledged. Now notice that.';">I pledge</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p>Effective Dharma is a project of Effective Dharma. It has no legal existence and, on inspection, no self.</p>
+      <p>Not affiliated with any centre listed. Scores are satire. Costs are approximate. Verify before enlightening.</p>
+    </div>
+    <div>Research errors may be reported to the nearest wall.</div>
+  </div>
+</footer>
+
+<script>
+const AXES = [
+  ['cost','Cost-effectiveness'],
+  ['tract','Tractability'],
+  ['negl','Neglectedness'],
+  ['evid','Evidence base'],
+  ['room','Room for more sitting'],
+  ['risk','Ego-death risk'],
+];
+
+const RETREATS = [
+  {name:'Goenka Vipassana, 10-day', where:'Dhamma Dipa, Herefordshire (and 200+ centres)', cost:'Donation', days:10,
+   desc:'The gold standard. Wake at 4am, sit eleven hours, no talking, no eye contact, no journaling, no yoga, no writing this review. The evening discourse is on video and the video is from 1991. Unchanged since 1976 and, by the organisation’s account, since 500 BC.',
+   s:{cost:10,tract:6,negl:1,evid:8,room:10,risk:7},
+   verdict:'Recommended. Most LALYs per euro of any intervention we have measured. Nobody enjoys it. This appears to be load-bearing.'},
+  {name:'Gaia House', where:'Devon, England', cost:'Dana for teaching + accommodation fee', days:6,
+   desc:'The reasonable British option. Insight meditation in a former convent. Teachers speak in the tone of someone gently returning a library book. There is a queue for the tea urn and the queue is the practice.',
+   s:{cost:8,tract:7,negl:3,evid:8,room:6,risk:4},
+   verdict:'Recommended. Reliably good, rarely dramatic. Our model penalises this and we think our model is wrong.'},
+  {name:'Plum Village', where:'Dordogne, France', cost:'€400–700 / week', days:7,
+   desc:'Walking meditation, singing, and a bell that stops six hundred people mid-sentence. Retreatants are invited to smile at the in-breath. Compliance is high. Insight arrives disguised as washing a bowl.',
+   s:{cost:7,tract:9,negl:2,evid:6,room:5,risk:2},
+   verdict:'Recommended for beginners and the exhausted. Lowest ego-death risk of any residential retreat; the ego is instead asked to help with the dishes.'},
+  {name:'Insight Meditation Society', where:'Barre, Massachusetts', cost:'$1,500–3,000 (sliding scale)', days:9,
+   desc:'The American mothership. Three-month course available for those who have cleared their calendar and their lease. The waiting list is long enough to constitute a preliminary retreat.',
+   s:{cost:6,tract:6,negl:2,evid:9,room:3,risk:6},
+   verdict:'Recommended, if you can get in. Strongest evidence base in our dataset, partly because IMS alumni went on to write most of the evidence.'},
+  {name:'Spirit Rock', where:'Marin County, California', cost:'Sliding scale, upper end high', days:7,
+   desc:'Rolling hills, ergonomic cushions, a bookshop. Teachers are warm, the food is good, and the car park is a koan. Retreatants report feeling held; we have not established by whom.',
+   s:{cost:4,tract:8,negl:1,evid:7,room:3,risk:3},
+   verdict:'Solid but not neglected. The marginal retreatant here is displacing a therapist from Berkeley. We would rather fund the therapist’s sit somewhere cheaper.'},
+  {name:'Jhourney', where:'California / remote', cost:'$2,000–4,000', days:7,
+   desc:'Jhanas for people with equity. Concentration states taught with a syllabus, a Discord, and pre- and post-surveys. Bliss reported on day two; a Notion doc about the bliss on day three; a thread about the Notion doc on day four.',
+   s:{cost:5,tract:9,negl:6,evid:5,room:7,risk:6},
+   verdict:'Watch list, trending up. High tractability. The only retreat where the outcome data is better than the outcomes. We are supportive but would like the surveys to stop.'},
+  {name:'Pa-Auk Forest Monastery', where:'Mawlamyine, Myanmar', cost:'Donation', days:60,
+   desc:'Concentration practice taken with complete seriousness. Access concentration is a milestone; a nimitta is a Tuesday. Retreatants are expected to stay for months. Neglected mainly because it is in Myanmar.',
+   s:{cost:9,tract:3,negl:9,evid:6,room:9,risk:9},
+   verdict:'Recommended for the committed. Highest expected LALYs conditional on completion; completion is the hard part. Check the travel advisory, then check the mind.'},
+  {name:'Wat Suan Mokkh', where:'Chaiya, Thailand', cost:'~2,000 THB', days:10,
+   desc:'Concrete bed, wooden pillow, mosquito net, two meals, hot springs. The cheapest silent retreat on Earth. The wooden pillow does most of the teaching.',
+   s:{cost:10,tract:5,negl:5,evid:6,room:8,risk:6},
+   verdict:'Recommended. Cost-effectiveness is off the chart; the chart has been extended. Several analysts describe the pillow as “formative.”'},
+  {name:'Sky Cave Retreats — dark retreat', where:'Ashland, Oregon', cost:'$2,000–3,500', days:7,
+   desc:'A private cabin in total darkness. Food arrives through a hatch. On day three the visions begin. On day five you conclude the hatch is the teacher. You are not wrong.',
+   s:{cost:5,tract:3,negl:9,evid:3,room:6,risk:10},
+   verdict:'Watch list. Highest ego-death risk in our dataset. Evidence base is thin because researchers who complete it decline to fill in the survey, or to use light.'},
+  {name:'Monastic Academy (MAPLE)', where:'Lowell, Vermont', cost:'Sliding scale / work-trade', days:7,
+   desc:'A monastery with a startup’s org chart. Rigorous schedule, ethical commitments, strong esprit de corps. Retreatants may be asked to review the fundraising deck. Both activities are treated as practice.',
+   s:{cost:7,tract:6,negl:7,evid:4,room:8,risk:7},
+   verdict:'Promising. Unusually high room for more sitting. We asked about counterfactual impact and were sent a Theory of Change. It was quite good.'},
+  {name:'Search Inside Yourself', where:'Your employer’s conference room', cost:'€2,000–4,000 per seat (billed to employer)', days:2,
+   desc:'Mindfulness-based emotional intelligence, developed at Google. A body scan between the Q3 roadmap review and the trust-fall. Participants report improved focus, mostly on their phones.',
+   s:{cost:1,tract:8,negl:0,evid:5,room:1,risk:0},
+   verdict:'Not recommended. Lowest cost-effectiveness we have recorded. We note the employer’s counterfactual: the money was otherwise going to an escape room.'},
+  {name:'Waking Up app', where:'Your phone', cost:'~€130 / year', days:0,
+   desc:'Ten minutes a day from a man with an exceptionally calm voice. Introductions to nonduality between notifications. Our control for whether a retreat is necessary at all.',
+   s:{cost:8,tract:9,negl:0,evid:5,room:9,risk:3},
+   verdict:'Recommended as a floor. Cheap, scalable, and always available, which is also the problem: available is not the same as attended.'},
+  {name:'Read the suttas at home', where:'Your chair (SuttaCentral, free)', cost:'€0–14 (paperback)', days:0,
+   desc:'The original open-access intervention. No teacher, no schedule, no accommodation, no one to tell. Every teaching on this page, in the original, for nothing.',
+   s:{cost:10,tract:2,negl:8,evid:9,room:10,risk:2},
+   verdict:'Top on cost-effectiveness; bottom on tractability. In 2,500 years no participant has completed the reading list. Room for more sitting: unlimited.'},
+  {name:'Silent hike, no app', where:'Any ridge', cost:'€0 + bus fare', days:1,
+   desc:'Our control condition. Walk uphill, do not check your phone, come down.',
+   s:{cost:9,tract:8,negl:5,evid:7,room:9,risk:1},
+   verdict:'The benchmark every retreat above is measured against. Nine of them do not clear it. This finding was suppressed at the request of the retreat sector and restored at the request of the ridge.'},
+];
+
+const CAREERS = [
+  {name:'Concentration (jhana)', p:'Learn to hold attention on one object until the mind stops complaining and starts glowing. Historically monastic; now available with a Discord.',
+   impact:'High, if it takes', fit:'Stubborn, slightly obsessive, likes a syllabus', cap:'High — concentration transfers to every other path',
+   rec:'We recommend this for people who want a measurable result and are willing to be measured.'},
+  {name:'Insight / noting (Mahasi)', p:'Label everything that arises — rising, falling, hearing, thinking, doubting, doubting — until the labelling reveals there was nothing to label.',
+   impact:'High, with side effects', fit:'Verbal, analytical, good at admitting things are unpleasant', cap:'Medium — the maps are portable, the teacher is not',
+   rec:'Recommended for people who like progress bars. Read the section on the Dark Night before, not after.'},
+  {name:'Nondual / Dzogchen / Mahamudra', p:'Skip the ladder. Recognise the nature of mind directly, in a pointing-out instruction that takes eleven seconds and is then practised for forty years.',
+   impact:'Highest, allegedly', fit:'Comfortable with “there is nothing to do,” uncomfortable with actually doing nothing', cap:'Low — hard to explain your progress at parties',
+   rec:'We recommend this for people who have already tried something else. First-timers report enlightenment by Sunday and confusion by Monday.'},
+  {name:'Metta (loving-kindness)', p:'Wish well to yourself, a friend, a stranger, an enemy, and all beings, in that order, until the ordering stops mattering.',
+   impact:'Medium, but reliable', fit:'Warm, tired, or both', cap:'High — makes every other practice go better',
+   rec:'Recommended as a supplement. Neglected because it is not cool. This is the strongest argument in its favour.'},
+  {name:'Zen (koan / shikantaza)', p:'Sit facing a wall. Either work on an unanswerable question or on nothing at all. A person with a stick will help.',
+   impact:'Unknown — Zen declines to be measured', fit:'Aesthetic, patient, allergic to maps', cap:'Low — progress is not a concept the lineage recognises',
+   rec:'We are unable to rate this path. When we asked for outcome data we were shown a rock garden. This may have been the data.'},
+  {name:'Secular mindfulness (MBSR)', p:'Eight weeks, a body scan, a raisin. Evidence-based, scalable, and available through your health insurer.',
+   impact:'Low per person, large in aggregate', fit:'Skeptical, busy, has a GP', cap:'Medium — a doorway, not a room',
+   rec:'Recommended as an on-ramp. Most people stop here. We think of it as the retreat sector’s bednet: cheap, proven, and not the whole story.'},
+];
+
+const overall = r => Object.values(r.s).reduce((a,b)=>a+b,0)/AXES.length;
+const grid = document.getElementById('grid');
+let axis = 'overall';
+
+function squares(v){
+  let h='';
+  for(let i=1;i<=10;i++) h+=`<i class="${i<=v?'on':''}${i>8&&i<=v?' hi':''}"></i>`;
+  return `<div class="sq">${h}</div>`;
+}
+
+function render(){
+  const list=[...RETREATS].sort((a,b)=>(axis==='overall'?overall(b)-overall(a):b.s[axis]-a.s[axis]));
+  grid.innerHTML=list.map((r,i)=>`
+    <article class="card${i===0?' top':''}">
+      ${i===0?`<span class="badge">${axis==='overall'?'Top recommendation':'Highest on this axis'}</span>`:''}
+      <h3>${r.name}</h3>
+      <p class="where">${r.where}</p>
+      <p class="desc">${r.desc}</p>
+      <div class="meta">
+        <div>Cost <b>${r.cost}</b></div>
+        <div>Length <b>${r.days?r.days+' day'+(r.days>1?'s':''):'Ongoing'}</b></div>
+        <div>Overall <b>${overall(r).toFixed(1)} / 10</b></div>
+        <div>Expected LALYs <b>${(overall(r)*0.31).toFixed(2)}</b></div>
+      </div>
+      ${AXES.map(([k,label])=>`
+        <div class="axis${k===axis?' active':''}">
+          <span class="name">${label}</span>${squares(r.s[k])}<span class="val">${r.s[k]}</span>
+        </div>`).join('')}
+      <div class="verdict"><b>Our verdict.</b> ${r.verdict}</div>
+    </article>`).join('');
+}
+
+document.getElementById('careers').innerHTML = CAREERS.map(c=>`
+  <article class="career">
+    <h3>${c.name}</h3>
+    <p>${c.p}</p>
+    <dl>
+      <dt>Impact</dt><dd>${c.impact}</dd>
+      <dt>Personal fit</dt><dd>${c.fit}</dd>
+      <dt>Career capital</dt><dd>${c.cap}</dd>
+    </dl>
+    <div class="fit">${c.rec}</div>
+  </article>`).join('');
+
+document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed','false'));
+  b.setAttribute('aria-pressed','true');
+  axis=b.dataset.axis; render();
+}));
+render();
+</script>
+</body>
+</html>
